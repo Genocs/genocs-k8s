@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![Genocs Library Architecture](./assets/Genocs-Library-gnx-architecture.drawio.png)
+
 The repository contains the solution for the Genocs Library K8s challenge. The solution is based on the following requirements:
 
 - Use Genocs Library to build the services
@@ -31,7 +33,6 @@ Todo:
 
 How to install microk8s on Ubuntu running on Windows WSL2
 
-
 1. First, install MicroK8s on your Ubuntu WSL2 VM
    ``` bash
    sudo snap install microk8s --classic
@@ -52,9 +53,9 @@ How to install microk8s on Ubuntu running on Windows WSL2
    ```
 4. Enable essential addons for your cluster:
    ``` bash
-   microk8s enable metallb    # For load balancing
-   microk8s enable ingress    # For ingress controller
-   microk8s enable dns        # For DNS resolution
+   microk8s enable metallb       # For load balancing
+   microk8s enable ingress       # For ingress controller
+   microk8s enable dns           # For DNS resolution
    microk8s enable cert-manager  # For SSL/TLS certificate management
    ```
 
@@ -71,7 +72,7 @@ How to install microk8s on Ubuntu running on Windows WSL2
    
    ### Option 1
    wsl hostname -I
-   netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80    connectaddress=<WSL2_IP>
+   netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=<WSL2_IP>
    
    ### Option 2
    netsh interface portproxy set v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=$(wsl hostname -I)
@@ -99,7 +100,7 @@ How to install microk8s on Ubuntu running on Windows WSL2
 > Make sure your WSL2 VM has enough resources allocated (memory and CPU)
 > The default configuration creates a single-node cluster
 > You can use microk8s kubectl instead of kubectl for all Kubernetes commands
-> For development purposes, you might want to create an alias: alias kubectl='microk8s kubectl'
+> For development purposes, you might want to create an alias: `alias kubectl='microk8s kubectl'`
 
 
 
@@ -109,7 +110,7 @@ How to install microk8s on Ubuntu running on Windows WSL2
 bash ./cluster-initialize/deploy_solution.sh
 ```
 
-Following is a list of useful commands
+Following is a list of useful commands:
 ``` bash
 # Create namespace
 microk8s kubectl create namespace gnx-apps-ns
@@ -168,7 +169,6 @@ sudo snap install helm --classic
 microk8s helm create gnxchart
 
 # Package a chart
-
 cd ./deployment/helm
 microk8s helm package gnxchart
 
@@ -202,8 +202,4 @@ iptables -t nat -A POSTROUTING ! -s 127.0.0.1 -j MASQUERADE
 
 
 netsh interface portproxy show all
-
 ```
-
-
-
