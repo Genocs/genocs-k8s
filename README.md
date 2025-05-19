@@ -107,7 +107,7 @@ How to install microk8s on Ubuntu running on Windows WSL2
 
 ``` bash
 # Initialize infrastructure services and application stack 
-bash ./cluster-initialize/deploy_solution.sh
+bash ./01-cluster-initialize/deploy_solution.sh
 ```
 
 Following is a list of useful commands:
