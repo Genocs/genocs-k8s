@@ -27,28 +27,90 @@ Todo:
 
 
 
-
 ## Install MicroK8s
 
-```bash
-# Start Microk8s
-microk8s start
+How to install microk8s on Ubuntu running on Windows WSL2
 
-# Check status
-microk8s status --wait-ready
 
-# Stop Microk8s
-microk8s stop
+1. First, install MicroK8s on your Ubuntu WSL2 VM
+   ``` bash
+   sudo snap install microk8s --classic
+   ```
 
-# Enable Addons (only once)
-microk8s enable metallb
-microk8s enable ingress
-microk8s enable dns
-microk8s enable cert-manager # In case you want to use certification manager along with Let's Encrypt 
+2. Add your user to the microk8s group to avoid using sudo with every command
+   ``` bash
+   sudo usermod -a -G microk8s $USER
+   sudo chown -f -R $USER ~/.kube
+   ```
+3. Start MicroK8s and wait for it to be ready
+   ``` bash
+   # Start Microk8s
+   microk8s start
 
-# Start Dashboard
-microk8s dashboard-proxy
+   # Check status
+   microk8s status --wait-ready
+   ```
+4. Enable essential addons for your cluster:
+   ``` bash
+   microk8s enable metallb    # For load balancing
+   microk8s enable ingress    # For ingress controller
+   microk8s enable dns        # For DNS resolution
+   microk8s enable cert-manager  # For SSL/TLS certificate management
+   ```
 
+5. To access the Kubernetes dashboard:
+   ``` bash
+   microk8s dashboard-proxy
+   ```
+
+6. For WSL2 specific configuration, you'll need to set up port forwarding from Windows to WSL2. You can do this in PowerShell with either of these methods:
+   Option 1:   
+
+   ``` PowerShell
+   ## Forward WSL2 IP connections to Windows host 
+   
+   ### Option 1
+   wsl hostname -I
+   netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80    connectaddress=<WSL2_IP>
+   
+   ### Option 2
+   netsh interface portproxy set v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=$(wsl hostname -I)
+   ```
+
+7. To verify your installation, you can run these commands:
+   ``` bash
+   # Check cluster status
+   microk8s kubectl get nodes
+
+   # Check all resources
+   microk8s kubectl get all --all-namespaces
+
+   # Create a test deployment
+   microk8s kubectl create deployment nginx --image=nginx
+   ```
+
+8. To stop MicroK8s when needed:
+   ``` bash
+   # Stop Microk8s
+   microk8s stop
+   ```
+
+> Important Notes:
+> Make sure your WSL2 VM has enough resources allocated (memory and CPU)
+> The default configuration creates a single-node cluster
+> You can use microk8s kubectl instead of kubectl for all Kubernetes commands
+> For development purposes, you might want to create an alias: alias kubectl='microk8s kubectl'
+
+
+
+
+``` bash
+# Initialize infrastructure services and application stack 
+bash ./cluster-initialize/deploy_solution.sh
+```
+
+Following is a list of useful commands
+``` bash
 # Create namespace
 microk8s kubectl create namespace gnx-apps-ns
 
@@ -68,7 +130,6 @@ microk8s kubectl expose deployment --namespace=gnx-apps-ns nginx --port 5101 --t
 microk8s kubectl expose deployment --namespace=gnx-apps-ns apigateway --port 5180 --target-port 80 --type LoadBalancer --name apigateway2
 microk8s kubectl expose deployment --namespace=gnx-apps-ns apigateway --port 80 --type ClusterIP --name apigateway2
 
-
 # Scale deployments
 microk8s kubectl scale deployment nginx --replicas=1
 
@@ -78,7 +139,7 @@ microk8s kubectl port-forward -n default service/microbot 80:80 --address 0.0.0.
 ```
 
 To run the application, you can use the following commands:
-```bash
+``` bash
 # Use yaml files
 microk8s kubectl apply -f ./deployment/namespace.yml
 microk8s kubectl apply -f ./deployment/secrets.yml
@@ -93,14 +154,13 @@ microk8s kubectl apply -f ./deployment/notifications.yml
 
 or alternatively, you can use the following command to deploy the application:
 
-```bash
+``` bash
 bash deploy-services.sh
 ```
 
 ## How to use helm
 
-
-```bash
+``` bash
 # Install Helm
 sudo snap install helm --classic
 
@@ -126,7 +186,7 @@ microk8s helm uninstall dev-gnx-1
 ```
 
 
-```bash
+``` bash
 # Enable IP Forwarding:
 
 sudo apt install iptables
@@ -145,13 +205,5 @@ netsh interface portproxy show all
 
 ```
 
-```PowerShell
-## Forward WSL2 IP connections to Windows host 
 
-### Option 1
-wsl hostname -I
-netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=172.18.150.83
 
-### Option 2
-netsh interface portproxy set v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=$(wsl hostname -I)
-```

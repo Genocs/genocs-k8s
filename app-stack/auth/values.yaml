@@ -1,4 +1,0 @@
-cpu_requests: "100m"
-memory_requests: "200Mi"
-cpu_limits: "200m"
-memory_limits: "200Mi"

@@ -1,12 +1,11 @@
-# identities.yml
+# identities-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
-# identities-deployment.yml
 metadata:
-  namespace: gnx-apps-ns
   name: identities
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1 # Number of pods to run
+  replicas: {{ .Values.replicaCount }} # Number of pods to run
   selector:
     matchLabels:
       app: identities # Select pods with this label
@@ -17,7 +16,7 @@ spec:
     spec:
       containers:
         - name: identities-container
-          image: genocs/identities-webapi:1.0.4 # Replace with your image
+          image: "genocs/identities-webapi:{{ .Values.imageTag.identities }}"
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
@@ -26,11 +25,11 @@ spec:
 
             # RabbitMQ
             - name: rabbitmq__hostname
-              value: "flamingo.rmq.cloudamqp.com"
+              value: {{ .Values.rabbitmq.hostname }}
             - name: rabbitmq__hostnames__0
-              value: "flamingo.rmq.cloudamqp.com"
+              value: {{ .Values.rabbitmq.hostname }}
             - name: rabbitmq__virtualhost
-              value: "zcoqmbte"
+              value: {{ .Values.rabbitmq.virtualhost }}
             - name: rabbitmq__username
               valueFrom:
                 secretKeyRef:
@@ -41,6 +40,7 @@ spec:
                 secretKeyRef:
                   name: gnx-app-secrets
                   key: RABBITMQ_PASSWORD
+
             # MongoDB
             - name: mongodb__connectionString
               valueFrom:
@@ -57,19 +57,3 @@ spec:
             limits:
               cpu: 200m
               memory: 400Mi
-
----
-# identities-service.yml
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: gnx-apps-ns
-  name: identities-svc
-spec:
-  selector:
-    app: identities # Select pods with this label
-  ports:
-    - protocol: TCP
-      port: 80 # Port the service exposes
-      targetPort: 8080 # Port the container exposes
-  type: ClusterIP # Expose the service internally

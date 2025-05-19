@@ -1,23 +1,23 @@
-# notifications.yml
+# orders-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
-# notifications-deployment.yml
 metadata:
-  namespace: gnx-apps-ns
-  name: notifications
+  name: orders
+  namespace: {{ .Release.Namespace }}
+
 spec:
-  replicas: 1 # Number of pods to run
+  replicas: {{ .Values.replicaCount }} # Number of pods to run
   selector:
     matchLabels:
-      app: notifications # Select pods with this label
+      app: orders # Select pods with this label
   template:
     metadata:
       labels:
-        app: notifications # Label for the pods
+        app: orders # Label for the pods
     spec:
       containers:
-        - name: notifications-container
-          image: genocs/notifications-webapi:1.0.4 # Replace with your image
+        - name: orders-container
+          image: "genocs/orders-webapi:{{ .Values.imageTag.orders }}"
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Development"
@@ -26,11 +26,11 @@ spec:
 
             # RabbitMQ
             - name: rabbitmq__hostname
-              value: "flamingo.rmq.cloudamqp.com"
+              value: {{ .Values.rabbitmq.hostname }}
             - name: rabbitmq__hostnames__0
-              value: "flamingo.rmq.cloudamqp.com"
+              value: {{ .Values.rabbitmq.hostname }}
             - name: rabbitmq__virtualhost
-              value: "zcoqmbte"
+              value: {{ .Values.rabbitmq.virtualhost }}
             - name: rabbitmq__username
               valueFrom:
                 secretKeyRef:
@@ -41,12 +41,15 @@ spec:
                 secretKeyRef:
                   name: gnx-app-secrets
                   key: RABBITMQ_PASSWORD
+
             # MongoDB
             - name: mongodb__connectionString
               valueFrom:
                 secretKeyRef:
                   name: gnx-app-secrets
                   key: MONGODB_CONNECTION_STRING
+            - name: httpclient__services__products
+              value: "http://products-svc"
 
           ports:
             - containerPort: 8080 # Port the container exposes
@@ -57,19 +60,3 @@ spec:
             limits:
               cpu: 100m
               memory: 200Mi
-
----
-# notifications-service.yml
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: gnx-apps-ns
-  name: notifications-svc
-spec:
-  selector:
-    app: notifications # Select pods with this label
-  ports:
-    - protocol: TCP
-      port: 80 # Port the service exposes
-      targetPort: 8080 # Port the container exposes
-  type: ClusterIP # Expose the service internally
