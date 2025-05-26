@@ -1,0 +1,24 @@
+# products-vol.yaml
+# Persistent Volume for the products application
+# This file contains the configuration for the Persistent Volume (PV) for the products application.
+# It defines the storage requirements and access modes for the application.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: products-vol
+  namespace: {{ .Release.Namespace }}
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 10Mi # Change this to your desired storage size.
+  accessModes:
+    - ReadWriteOnce # Change this to your desired access mode. ReadWriteOnce is common for single-node access.
+  persistentVolumeReclaimPolicy: Retain # Change this to your desired reclaim policy. Retain keeps the data after the PV is deleted.
+  storageClassName: microk8s-hostpath # Change this to your desired storage class
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: products-pvc
+  hostPath:
+    path: "/var/snap/microk8s/common/default-storage/products-vol" # Change this to your desired host path
+  # hostPath is used for local development; change to a cloud provider's storage class in production

@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # Variables
-APP_CHART_DIR="../app-stack"                  # Replace with the path to your parent chart
-RELEASE_NAME="gnx-app-stack"                  # Replace with your desired release name
 MONGODB_VALUES_FILE="./mongodb-values.yaml"   # Path to your MongoDB custom values file
 RABBITMQ_VALUES_FILE="./rabbitmq-values.yaml" # Path to your RabbitMQ custom values file
 

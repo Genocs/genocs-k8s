@@ -111,15 +111,7 @@ tolerations: []
 
 affinity: {}
 
-# imageTag is a map of image tags for each of the services
-imageTag:  
-  apigateway: "1.0.4"
-  identities: "1.0.4"
-  products: "1.0.4"
-  orders: "1.0.4"
-  notifications: "1.0.4" 
-
-# RabbitMQ credentials (for local development) 
+# RabbitMQ credentials (for local development)
 rabbitmq:
   hostname: "flamingo.rmq.cloudamqp.com"
   virtualhost: "zcoqmbte"
@@ -130,3 +122,10 @@ rabbitmq:
 mongodb:
   connectionString: "mongodb://localhost:27017"
 
+# imageTag is a map of image tags for each of the services
+imageTag:
+  apigateway: "1.0.4"
+  identities: "1.0.4"
+  products: "1.0.4"
+  orders: "1.0.4"
+  notifications: "1.0.4"

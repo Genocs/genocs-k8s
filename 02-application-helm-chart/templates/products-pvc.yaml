@@ -1,0 +1,16 @@
+# products-pvc.yaml
+# Persistent Volume Claim (PVC) for the products application
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: products-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: products # Label for the PVC to match the application
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: microk8s-hostpath # managed-csi
+  resources:
+    requests:      
+      storage: 10Mi # Set the size of the PVC to 10 megabytes
