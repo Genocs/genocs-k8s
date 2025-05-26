@@ -4,26 +4,31 @@ kind: Deployment
 metadata:
   name: products
   namespace: {{ .Release.Namespace }}
+  labels:
+    app: products
+    run: products
 
 spec:
-  replicas: {{ .Values.replicaCount }} # Number of pods to run
+  replicas: {{ .Values.replicaCount }} # Number of pods to run # Evaluate whether to use hpa or not
   selector:
     matchLabels:
       app: products # Select pods with this label
+      run: products
   template:
     metadata:
       labels:
-        app: products # Label for the pods
+        app: products # Label for the pods to match the service
+        run: products
     spec:
       containers:
-        - name: products-container
-          image: "genocs/products-webapi:{{ .Values.imageTag.products }}"
+        - name: products
+          image: "acrgenocs.azurecr.io/products:{{ .Values.imageTag.products }}" # The image name should be updated to the correct one
           env:
             - name: ASPNETCORE_ENVIRONMENT
-              value: "Development"
-            - name: logger__level
-              value: "Debug"
-
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: ASPNETCORE_ENVIRONMENT
             # RabbitMQ
             - name: rabbitmq__hostname
               value: {{ .Values.rabbitmq.hostname }}
@@ -34,27 +39,44 @@ spec:
             - name: rabbitmq__username
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: RABBITMQ_USER_NAME
             - name: rabbitmq__password
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: RABBITMQ_PASSWORD
 
             # MongoDB
             - name: mongodb__connectionString
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: MONGODB_CONNECTION_STRING
 
           ports:
             - containerPort: 8080 # Port the container exposes
-          resources: # Optional resource requests and limits
+
+          volumeMounts:
+            - name: products-config-volume
+              mountPath: /app/config
+
+          envFrom:
+            - secretRef:
+                name: "app-secrets"
+          resources:
             requests:
-              cpu: 50m
-              memory: 100Mi
+              cpu: { { .Values.cpu_requests } } #50% of a core
+              memory: { { .Values.memory_requests } }
             limits:
-              cpu: 100m
-              memory: 200Mi
+              cpu: { { .Values.cpu_limits } } #50% of a core
+              memory: { { .Values.memory_limits } }
+          imagePullPolicy: Always
+      volumes:
+        - name: products-config-volume
+          persistentVolumeClaim:
+            claimName: products-pvc
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: regcred

@@ -34,19 +34,19 @@ spec:
             - name: rabbitmq__username
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: RABBITMQ_USER_NAME
             - name: rabbitmq__password
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: RABBITMQ_PASSWORD
 
             # MongoDB
             - name: mongodb__connectionString
               valueFrom:
                 secretKeyRef:
-                  name: gnx-app-secrets
+                  name: app-secrets
                   key: MONGODB_CONNECTION_STRING
             - name: httpclient__services__products
               value: "http://products-svc"
