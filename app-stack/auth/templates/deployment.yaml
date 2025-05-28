@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+ 
+metadata:
+  name: auth-webapi
+  namespace: gnx-apps
+  labels:
+    app: auth-webapi
+    run: auth-webapi
+ 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: auth-webapi
+ 
+  template:
+    metadata:
+      labels:
+        app: auth-webapi
+        run: auth-webapi
+ 
+    spec:
+      containers:
+        - name: auth-webapi
+          image: gnxregistry.azurecr.io/apiauth:latest
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: KeyVaultName
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: KeyVaultName
+            - name: KeyVaultUserIdentityId
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: KeyVaultUserIdentityId
+            - name: ApplicationsInsights__InstrumentationKey
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ApplicationsInsights__InstrumentationKey
+            - name: DBSettings__Database
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: DBSettings__Database__Auth
+            - name: SendGridSettings__FromEmail
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: SendGridSettings__FromEmail
+            - name: ResetPasswordUrl
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ResetPasswordUrl
+            - name: ResetPasswordUrlMobile
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ResetPasswordUrlMobile
+            - name: ResetPasswordExpiration
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ResetPasswordExpiration
+            - name: ResetPasswordTemplateId
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ResetPasswordTemplateId
+            - name: ApiKeyEnvironment
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: ApiKeyEnvironment
+            - name: Environment__ServicePath
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config
+                  key: Environment__ServicePath__Auth
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          envFrom:
+            - secretRef:
+                name: "gnx-app-secrets"
+          resources:
+            requests:
+              cpu: {{ .Values.cpu_requests}} #50% of a core
+              memory: {{ .Values.memory_requests}}
+            limits:
+              cpu: {{ .Values.cpu_limits}} #50% of a core
+              memory: {{ .Values.memory_limits}}
+          imagePullPolicy: Always
+      volumes:
+        - name: config-volume
+          configMap:
+            name: app-config
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+ 
