@@ -6,6 +6,7 @@ metadata:
   labels:
     app: gnx-demo-app  
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:

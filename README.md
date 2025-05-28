@@ -161,6 +161,60 @@ microk8s helm uninstall dev-gnx-1
 bash ./01-cluster-initialize/setup-infrastructure.sh
 ```
 
+
+## How to setup nginx ingress controller
+To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:
+
+1. **Enable the Nginx Ingress Controller**:
+   MicroK8s provides an easy way to enable the Nginx Ingress Controller. Run the following command:
+   ```bash
+   microk8s enable ingress
+   ```
+2. **Verify the Ingress Controller is running**:
+   After enabling the Ingress Controller, you can check its status by running:
+   ```bash
+   microk8s kubectl get pods -n kube-system
+   ```
+   Look for a pod with a name that starts with `nginx-ingress-controller`.
+3. **Create an Ingress Resource**:
+   You need to create an Ingress resource that defines how to route traffic to your services. Create a file named `ingress.yaml` with the following content:
+   ```yaml
+   apiVersion: networking.k8s.io/v1
+   kind: Ingress
+   metadata:
+     name: my-ingress
+     namespace: gnx-apps
+   spec:
+     rules:
+     - host: myapp.example.com
+       http:
+         paths:
+         >>>>>>>>
+```
+
+In case you want to use the Nginx Ingress Controller with Let's Encrypt for SSL/TLS certificates, you can follow these additional steps:
+```yaml
+TBW
+```
+
+To install the Nginx with helmchart, you can use the following command:
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx -namespace ingress-nginx --create-namespace
+
+# Everything in one command
+helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+```
+
+
+``` bash
+# Initialize infrastructure services
+bash ./01-cluster-initialize/setup-infrastructure.sh
+```
+
+
+
 ----
 # Useful Commands
 
