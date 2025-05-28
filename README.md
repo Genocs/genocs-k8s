@@ -386,4 +386,16 @@ To set up Let's Encrypt with the Nginx Ingress Controller in your MicroK8s clust
        email:  <
 
 
+----
+
+This section describe the repository folders along with a brief description of their contents:
+
+## 01-setup-infrasctructure
+This folder contains scripts and configurations to set up the infrastructure for the Genocs Library K8s challenge. It includes:
+- setup-infrastructure.sh: A script to initialize the infrastructure services.
+
+
+## 02-deploy-application
+This folder contains the deployment configurations for the Genocs Library application.
+
 

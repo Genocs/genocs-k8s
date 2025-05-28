@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Variables
-APP_CHART_DIR="../app-stack"                  # Replace with the path to your parent chart
-RELEASE_NAME="gnx-app-stack"                  # Replace with your desired release name
+APP_CHART_DIR="../04-app-stack"               # Replace with the path to your parent chart
+NAMESPACE="gnx-app"                           # Replace with your desired namespace
 MONGODB_VALUES_FILE="./mongodb-values.yaml"   # Path to your MongoDB custom values file
 RABBITMQ_VALUES_FILE="./rabbitmq-values.yaml" # Path to your RabbitMQ custom values file
 
@@ -24,14 +24,14 @@ helm repo update
 
 
 # Install/Update Helm Rabbitmq repo 
-echo "Updating / Installing RabbitMQ service..."
+echo "Updating/Installing RabbitMQ service..."
 helm upgrade --install rabbitmq -f rabbitmq-values.yaml oci://registry-1.docker.io/bitnamicharts/rabbitmq -n rabbitmq --create-namespace
-echo "Updating / Installing RabbitMQ service completed..."
+echo "Updating/Installing RabbitMQ service completed..."
 echo "----------------------------------------------------"
 # Install/Update Helm Mongodb repo 
-echo "Udating / Installing Mongodb service..."
+echo "Udating/Installing Mongodb service..."
 helm upgrade --install mongodb -f mongodb-values.yaml oci://registry-1.docker.io/bitnamicharts/mongodb -n mongodb --create-namespace
-echo "Updating / Installing Mongodb service completed..."
+echo "Updating/Installing Mongodb service completed..."
 echo "----------------------------------------------------"
 
 # Copy Application Stack Helm Chart, ensure all the local repository are up to date.
@@ -50,7 +50,7 @@ helm dependency list
 echo "----------------------------------------------------"
 
 echo "Upgrade/install backend stack..."
-helm upgrade --install gnx-apps -n gnx-apps --create-namespace .
+helm upgrade --install gnx-apps -n $NAMESPACE --create-namespace .
 echo "Updating / Installing backend service completed..."
 echo "----------------------------------------------------"
 
@@ -60,10 +60,12 @@ sleep 30
 
 # Verify the installation
 echo "Verifying the installation..."
-kubectl get pods --namespace gnx-apps
+kubectl get pods --namespace mongodb
+kubectl get pods --namespace rabbitmq
+kubectl get pods --namespace $NAMESPACE
 
 # Refresh the certificates, dev-aks-secret is the name of the certificate avaialable in the ingress file.
 echo "refreshing the certificates..."
 echo "----------------------------------------------------"
-kubectl delete certificate dev-aks-secret -n gnx-apps
+kubectl delete certificate dev-aks-secret -n $NAMESPACE
 echo "certificates refreshing completed..."
