@@ -74,7 +74,7 @@ How to install microk8s on Ubuntu running on Windows WSL2
    microk8s enable argocd        # For continuous deployment
    ```
 
-8. To access the Kubernetes dashboard:
+8. Run Kubernetes dashboard (Use a new terminal for this command):
    ``` bash
    # Access the dashboard
    microk8s dashboard-proxy
@@ -100,7 +100,8 @@ How to install microk8s on Ubuntu running on Windows WSL2
     # Check all resources
     microk8s kubectl get all --all-namespaces
  
-    # Create a test deployment
+    # Create a test deployment by means of an Nginx image
+    # This will create a simple Nginx deployment
     microk8s kubectl create deployment nginx --image=nginx
     ```
 
@@ -118,7 +119,6 @@ How to install microk8s on Ubuntu running on Windows WSL2
 
 
 ## How to setup and use Helm
-
 Helm is a package manager for Kubernetes that helps you manage Kubernetes applications. It allows you to define, install, and upgrade even the most complex Kubernetes applications. Follow these steps to use Helm with your MicroK8s cluster:
 
 
@@ -127,40 +127,34 @@ Helm is a package manager for Kubernetes that helps you manage Kubernetes applic
 sudo snap install helm --classic
 ```
 
-Upon installing Helm, you can use it to manage your Kubernetes applications. Here are some common Helm commands:
+Upon installing Helm, a package manager for Kubernetes, you can use it to simplify application deployment and management. Here are some common Helm commands:
 
 **Scenario N.1**: Create a new Helm chart from scratch, package it, and deploy it to your cluster
 
 ``` bash
 # Create a new helm chart
-microk8s helm create gnxchart
+helm create gnxchart
 
 # Package a chart
-cd ./deployment/helm
-microk8s helm package gnxchart
+cd ./deployments/helm
+helm package gnxchart
 
 # Install the chart on a specific namespace
-microk8s helm install dev-gnx-1 ./gnxchart --namespace gnx-apps
+helm install dev-gnx-1 ./gnxchart --namespace gnx-apps
 
 # List all the helm charts
-microk8s helm list
+helm list
 
 # List all the helm charts regardless of the namespace
-microk8s helm list --all-namespaces
+helm list --all-namespaces
 
 # Upgrade the helm chart by setting the replica count to 3
-microk8s helm upgrade dev-gnx-1 ./gnxchart --namespace gnx-apps --set replicaCount=3
+helm upgrade dev-gnx-1 ./gnxchart --namespace gnx-apps --set replicaCount=3
 
 # Uninstall the helm chart
-microk8s helm uninstall dev-gnx-1
+helm uninstall dev-gnx-1
 ```
 ----
-
-``` bash
-# Initialize infrastructure services
-bash ./01-cluster-initialize/setup-infrastructure.sh
-```
-
 
 ## How to setup nginx ingress controller
 To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:
@@ -190,7 +184,7 @@ To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these st
        http:
          paths:
          >>>>>>>>
-```
+   ```
 
 In case you want to use the Nginx Ingress Controller with Let's Encrypt for SSL/TLS certificates, you can follow these additional steps:
 ```yaml
@@ -212,8 +206,6 @@ helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.git
 # Initialize infrastructure services
 bash ./01-cluster-initialize/setup-infrastructure.sh
 ```
-
-
 
 ----
 # Useful Commands
@@ -347,7 +339,7 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    WSL_IP=$(hostname -I | awk '{print $1}')
    
    # Set up port forwarding
-   powershell.exe -Command "netsh interface portproxy add v4tov4    listenport=10443 listenaddress=0.0.0.0 connectport=10443    connectaddress=$WSL_IP"
+   powershell.exe -Command "netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.0 connectport=10443 connectaddress=$WSL_IP"
    ```
 
 6. Make the script executable and add it to your `.bashrc`:
@@ -453,3 +445,7 @@ This folder contains scripts and configurations to set up the infrastructure for
 This folder contains the deployment configurations for the Genocs Library application.
 
 
+``` bash
+# Initialize infrastructure services
+bash ./01-cluster-initialize/setup-infrastructure.sh
+```

@@ -4,6 +4,5 @@ metadata:
   name: "{{ .Release.Name }}-configmap"
   namespace: {{ .Release.Namespace }}
 data:
-  placeholdervalue: "Hello World"
   ASPNETCORE_ENVIRONMENT: "development"
   ASPNETCORE_URLS: "http://+:80"
