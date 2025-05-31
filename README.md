@@ -1,36 +1,78 @@
 # Genocs Library K8s walkthrough
 
+This repository contains the solution for the Genocs Library K8s challenge, which involves setting up a Kubernetes cluster using MicroK8s, deploying a web application, and managing it with Helm and ArgoCD. The solution also includes the use of an internal API gateway, identity service, external MongoDB database, RabbitMQ message broker, and various Kubernetes resources like Secrets and ConfigMaps.
+
+The solution is designed to be run on an Ubuntu 24.04.1 LTS VM using Windows Subsystem for Linux (WSL2). It leverages MicroK8s for Kubernetes management, Nginx AGIC for ingress, and follows best practices for application deployment and management in a Kubernetes environment.
+
 ## Introduction
 
 ![Genocs Library Architecture](./assets/Genocs-Library-gnx-architecture.drawio.png)
 
 The repository contains the solution for the Genocs Library K8s challenge. The solution is based on the following requirements:
 
-- Use Genocs Library to build the services
-- Host MicroK8s cluster onto Ubuntu Ubuntu 24.04.1 LTS VM  
-- Create a Kubernetes cluster with 1 nodes
+- Setup windows subsystem for Linux (WSL2) with Ubuntu 24.04.1 LTS
+- Use MicroK8s to create a Kubernetes cluster
+- Create a Kubernetes cluster with 1 nodes onto Ubuntu Ubuntu 24.04.1 LTS VM
 - Use Ngnix AGIC to expose the web application to the internet
-- Deploy Genocs library application
-- Use Helm chart to deploy the web application
-- Use an internal API gateway to route the traffic to the web application
+- Use Genocs Library to build the services
+- Deploy an application based on Genocs Library 
+- Use Helm chart to define the application deployment
+- Use ArgoCD to manage the application deployment
+- Use an internal API gateway to route the traffic to the web services
+- Use an internal identity service to manage the user authentication
 - Connect to an external MongoDB database
 - Connect to an external RabbitMQ message broker 
 - Use a Secret to store the database credentials
 - Use a ConfigMap to store the web application configuration
+- Use a Persistent Volume to store the data
+- Use a Persistent Volume Claim to claim the Persistent Volume
+- Setup a Kubernetes dashboard to monitor the cluster
+- Setup a Kubernetes dashboard to start automatically when the cluster starts
+- Setup ArgoCD to manage the application deployment
+- Use Helm chart to install MongoDB and RabbitMQ
+- Setup AGIC to espose MongoDB and RabbitMQ to the internet
+- Setup AGIC to expose ArgoCD dashboard to the internet 
 
 Todo:
 - Use Let's Encrypt to secure the web application
 - Use LXC runtime to create multiple nodes
-- Use a Persistent Volume to store the data
-
-# Note to be considered
-
-[linux container virtualization](https://linuxcontainers.org/)
 
 
 ## Install MicroK8s
 
-How to install microk8s on Ubuntu running on Windows WSL2
+The solution will use Windows Subsystem for Linux (WSL2) to run Ubuntu and MicroK8s. The following steps will guide you through the installation of MicroK8s on Ubuntu running on WSL2.
+
+### How to install MicroK8s on Ubuntu running on Windows WSL2
+
+Install WSL2 on Windows
+   - Follow the instructions from the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2.
+
+Othe option could be to use Microsoft Store to install Ubuntu:
+   - Open Microsoft Store and search for "Ubuntu"
+
+   ![Open Microsoft Store](./assets/k8s_01.png)
+
+   - Select the desired version of Ubuntu (e.g., Ubuntu 24.04 LTS)
+
+   ![Select Distro](./assets/k8s_02.png)
+
+   - Click on "Get" to install it.
+
+
+   Alternatively, you can use PowerShell to install WSL2 and Ubuntu:
+   - Open PowerShell as Administrator and run:
+     ```powershell
+     wsl --install
+     ```
+
+   - Open PowerShell as Administrator and run:
+     ```powershell
+     wsl --install -d Ubuntu
+     ```
+   
+After installation, you can open the Ubuntu terminal from the Start menu.
+
+## Install microk8s on Ubuntu
 
 1. First, install MicroK8s on your Ubuntu WSL2 VM
    ``` bash
@@ -111,14 +153,14 @@ How to install microk8s on Ubuntu running on Windows WSL2
     microk8s stop
     ```
 
-## **Important Notes**
+ **Important Notes**
 > - Make sure your WSL2 VM has enough resources allocated (memory and CPU)
 > - The default configuration creates a single-node cluster
 > - You can use `microk8s kubectl` instead of `kubectl` for all Kubernetes commands
 > - For development purposes, you might want to create an alias: `alias kubectl='microk8s kubectl'`
 
 
-## How to setup and use Helm
+## Setup Helm
 Helm is a package manager for Kubernetes that helps you manage Kubernetes applications. It allows you to define, install, and upgrade even the most complex Kubernetes applications. Follow these steps to use Helm with your MicroK8s cluster:
 
 
@@ -129,7 +171,9 @@ sudo snap install helm --classic
 
 Upon installing Helm, a package manager for Kubernetes, you can use it to simplify application deployment and management. Here are some common Helm commands:
 
-**Scenario N.1**: Create a new Helm chart from scratch, package it, and deploy it to your cluster
+**Scenario N.1**
+
+Create a new Helm chart from scratch, package it, and deploy it to your cluster
 
 ``` bash
 # Create a new helm chart
@@ -154,22 +198,24 @@ helm upgrade dev-gnx-1 ./gnxchart --namespace gnx-apps --set replicaCount=3
 # Uninstall the helm chart
 helm uninstall dev-gnx-1
 ```
-----
 
-## How to setup nginx ingress controller
+## Setup nginx ingress controller
 To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:
 
 1. **Enable the Nginx Ingress Controller**:
    MicroK8s provides an easy way to enable the Nginx Ingress Controller. Run the following command:
    ```bash
+   # Enable Nginx Ingress Controller
    microk8s enable ingress
    ```
+
 2. **Verify the Ingress Controller is running**:
    After enabling the Ingress Controller, you can check its status by running:
    ```bash
    microk8s kubectl get pods -n kube-system
    ```
    Look for a pod with a name that starts with `nginx-ingress-controller`.
+
 3. **Create an Ingress Resource**:
    You need to create an Ingress resource that defines how to route traffic to your services. Create a file named `ingress.yaml` with the following content:
    ```yaml
@@ -183,7 +229,7 @@ To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these st
      - host: myapp.example.com
        http:
          paths:
-         >>>>>>>>
+         >>>>>>>> TOBE CONTINUED <<<<<<<<
    ```
 
 In case you want to use the Nginx Ingress Controller with Let's Encrypt for SSL/TLS certificates, you can follow these additional steps:
@@ -196,67 +242,16 @@ To install the Nginx with helmchart, you can use the following command:
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install ingress-nginx ingress-nginx/ingress-nginx -namespace ingress-nginx --create-namespace
+```
 
+In case you want to run the above commands, all togheter, follow the command below:
+```bash
 # Everything in one command
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 ```
 
 
-``` bash
-# Initialize infrastructure services
-bash ./01-cluster-initialize/setup-infrastructure.sh
-```
-
-----
-# Useful Commands
-
-Following is a list of useful commands:
-``` bash
-# Create namespace
-microk8s kubectl create namespace gnx-apps
-
-# Create deployment (use it as hello world application)
-microk8s kubectl create deployment nginx --image=nginx
-microk8s kubectl create deployment microbot --image=dontrebootme/microbot:v1
-
-# Create a deployment on a namespace
-microk8s kubectl create deployment --namespace=gnx-apps microbot --image=dontrebootme/microbot:v1
-
-# delete deployment
-microk8s kubectl delete deployment microbot
-
-# Create service
-microk8s kubectl expose deployment nginx --port 5101 --target-port 80 --selector app=nginx --type LoadBalancer --name nginx2
-microk8s kubectl expose deployment --namespace=gnx-apps nginx --port 5101 --target-port 80 --selector app=nginx --type LoadBalancer --name nginx2
-microk8s kubectl expose deployment --namespace=gnx-apps apigateway --port 5180 --target-port 80 --type LoadBalancer --name apigateway2
-microk8s kubectl expose deployment --namespace=gnx-apps apigateway --port 80 --type ClusterIP --name apigateway2
-
-# Scale deployments
-microk8s kubectl scale deployment nginx --replicas=1
-
-watch microk8s kubectl get all
-
-microk8s kubectl port-forward -n default service/microbot 80:80 --address 0.0.0.0
-```
-
-To run the application, you can use the following commands:
-``` bash
-# Use yaml files
-microk8s kubectl apply -f ./deployment/namespace.yml
-microk8s kubectl apply -f ./deployment/secrets.yml
-microk8s kubectl apply -f ./deployment/nginx-ingress.yml
-microk8s kubectl apply -f ./deployment/cert-manager.yml
-microk8s kubectl apply -f ./deployment/apigateway.yml
-microk8s kubectl apply -f ./deployment/identities.yml
-microk8s kubectl apply -f ./deployment/products.yml
-microk8s kubectl apply -f ./deployment/orders.yml
-microk8s kubectl apply -f ./deployment/notifications.yml
-```
-
-or alternatively, you can use the following command to deploy the application:
-
-
-### How to Enable IP Forwarding
+## Enable IP Forwarding
 
 ``` bash
 # Install iptables if not already installed
@@ -274,7 +269,7 @@ iptables -t nat -L
 sysctl net.ipv4.ip_forward=1
 
 # Add your forwarding rule (use n.n.n.n:port):
-iptables -t nat -A PREROUTING -p tcp -d 172.24.129.237 --dport 5101 -j DNAT --to-destination 10.1.203.0:80
+iptables -t nat -A PREROUTING -p tcp -d <your-src-port> --dport 5101 -j DNAT --to-destination <your-destination-ip>:80
 
 # Ask IPtables to Masquerade:
 iptables -t nat -A POSTROUTING ! -s 127.0.0.1 -j MASQUERADE
@@ -283,11 +278,18 @@ iptables -t nat -A POSTROUTING ! -s 127.0.0.1 -j MASQUERADE
 netsh interface portproxy show all
 ```
 
-# Setup MicroK8s Dashboard to Start Automatically
+----
+# Setup Kubernetes Dashboard
 
-To set up MicroK8s to automatically start the dashboard when the cluster starts, we need to create a systemd service. Here's how to do it:
 
-1. Create a systemd service file for the dashboard. Create a new file at `/etc/systemd/system/microk8s-dashboard.service` with the following content:
+To set up the Kubernetes Dashboard in your MicroK8s cluster, follow these steps:
+
+
+### Setup MicroK8s Dashboard to Start Automatically
+
+To set up MicroK8s to automatically start the dashboard when the cluster starts, we need to create a `systemd service`. Here's how to do it:
+
+1. Create a `systemd service` file for the dashboard. Create a new file at `/etc/systemd/system/microk8s-dashboard.service` with the following content:
 
    ```ini
    [Unit]
@@ -325,7 +327,7 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    WSL_IP=$(wsl hostname -I)
    
    # Set up port forwarding in Windows PowerShell
-   netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.   0 connectport=10443 connectaddress=$WSL_IP
+   netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.0 connectport=10443 connectaddress=$WSL_IP
    ```
 
 5. To make the port forwarding persistent across WSL2 restarts, you can create a startup script in your WSL2 environment. Create a file at `~/.wslconfig` with:
@@ -361,9 +363,7 @@ To access the dashboard:
    microk8s kubectl create token default -n kube-system
    ```
 
-
-
-# How to setup pull images from private registry
+### How to setup pull images from private registry
 To set up your MicroK8s cluster to pull images from a private registry, you need to create a Kubernetes secret that contains your registry credentials. Here's how to do it:
 ```bash
 # Create a secret for your private registry
@@ -372,7 +372,7 @@ microk8s kubectl create secret docker-registry my-registry-secret \
   --docker-username=<your-username> \
   --docker-password=<your-password> \
   --docker-email=<your-email> \
-  --namespace gnx-apps
+  --namespace <your-app-namespace>
 ```
 Replace `<your-registry-server>`, `<your-username>`, `<your-password>`, and `<your-email>` with your actual registry details.
 # Use the secret in your deployment
@@ -434,6 +434,62 @@ To set up Let's Encrypt with the Nginx Ingress Controller in your MicroK8s clust
 
 ----
 
+# Application Deployment
+
+``` bash
+# Initialize infrastructure services
+bash ./01-cluster-initialize/setup-infrastructure.sh
+```
+
+
+### Useful Commands
+
+Following is a list of useful commands:
+``` bash
+# Create namespace
+microk8s kubectl create namespace gnx-apps
+
+# Create deployment (use it as hello world application)
+microk8s kubectl create deployment nginx --image=nginx
+microk8s kubectl create deployment microbot --image=dontrebootme/microbot:v1
+
+# Create a deployment on a namespace
+microk8s kubectl create deployment --namespace=gnx-apps microbot --image=dontrebootme/microbot:v1
+
+# delete deployment
+microk8s kubectl delete deployment microbot
+
+# Create service
+microk8s kubectl expose deployment nginx --port 5101 --target-port 80 --selector app=nginx --type LoadBalancer --name nginx2
+microk8s kubectl expose deployment --namespace=gnx-apps nginx --port 5101 --target-port 80 --selector app=nginx --type LoadBalancer --name nginx2
+microk8s kubectl expose deployment --namespace=gnx-apps apigateway --port 5180 --target-port 80 --type LoadBalancer --name apigateway2
+microk8s kubectl expose deployment --namespace=gnx-apps apigateway --port 80 --type ClusterIP --name apigateway2
+
+# Scale deployments
+microk8s kubectl scale deployment nginx --replicas=1
+
+watch microk8s kubectl get all
+
+microk8s kubectl port-forward -n default service/microbot 80:80 --address 0.0.0.0
+```
+
+To run the application, you can use the following commands:
+``` bash
+# Use yaml files
+microk8s kubectl apply -f ./deployment/namespace.yml
+microk8s kubectl apply -f ./deployment/secrets.yml
+microk8s kubectl apply -f ./deployment/nginx-ingress.yml
+microk8s kubectl apply -f ./deployment/cert-manager.yml
+microk8s kubectl apply -f ./deployment/apigateway.yml
+microk8s kubectl apply -f ./deployment/identities.yml
+microk8s kubectl apply -f ./deployment/products.yml
+microk8s kubectl apply -f ./deployment/orders.yml
+microk8s kubectl apply -f ./deployment/notifications.yml
+```
+
+or alternatively, you can use the following command to deploy the application:
+
+
 This section describe the repository folders along with a brief description of their contents:
 
 ## 01-setup-infrasctructure
@@ -449,3 +505,23 @@ This folder contains the deployment configurations for the Genocs Library applic
 # Initialize infrastructure services
 bash ./01-cluster-initialize/setup-infrastructure.sh
 ```
+
+
+# Miscellaneous
+
+References and resources used in this project:
+- [Genocs Library](https://genocs.com/library/)
+
+- [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install)
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+- [MicroK8s Documentation](https://microk8s.io/docs)
+- [Kubernetes Dashboard Documentation](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/)
+- [Helm Documentation](https://helm.sh/docs/)
+- [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
+- [Nginx Ingress Controller Documentation](https://kubernetes.github.io/ingress-nginx/)
+- [Cert-Manager Documentation](https://cert-manager.io/docs/)
+- [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [RabbitMQ Documentation](https://www.rabbitmq.com/documentation.html)
+
+- [linux container virtualization](https://linuxcontainers.org/)
