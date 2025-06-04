@@ -1188,7 +1188,7 @@ persistence:
   ## If undefined (the default) or set to null, no storageClassName spec is
   ## set, choosing the default provisioner.
   ##
-  storageClass: "managed-csi"
+  storageClass: ""
   ## @param persistence.accessModes PV Access Mode
   ##
   accessModes:
