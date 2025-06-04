@@ -3,6 +3,7 @@
 # Variables
 MONGODB_VALUES_FILE="./mongodb-values.yaml"   # Path to your MongoDB custom values file
 RABBITMQ_VALUES_FILE="./rabbitmq-values.yaml" # Path to your RabbitMQ custom values file
+GRAFANA_VALUES_FILE="./grafana-values.yaml" # Path to your Grafana custom values file
 
 # Check if the MongoDB values file exists
 if [[ ! -f "$MONGODB_VALUES_FILE" ]]; then
@@ -13,6 +14,12 @@ fi
 # Check if the RABBITMQ values file exists
 if [[ ! -f "$RABBITMQ_VALUES_FILE" ]]; then
     echo "Custom values file $RABBITMQ_VALUES_FILE not found!"
+    exit 1
+fi
+
+# Check if the GRAFANA values file exists
+if [[ ! -f "$GRAFANA_VALUES_FILE" ]]; then
+    echo "Custom values file $GRAFANA_VALUES_FILE not found!"
     exit 1
 fi
 
@@ -30,6 +37,12 @@ echo "----------------------------------------------------"
 echo "Udating/Installing Mongodb service..."
 helm upgrade --install mongodb -f mongodb-values.yaml oci://registry-1.docker.io/bitnamicharts/mongodb -n mongodb --create-namespace
 echo "Updating/Installing Mongodb service completed..."
+echo "----------------------------------------------------"
+
+# Install/Update Grafana service
+echo "Updating/Installing Grafana service..."
+helm upgrade --install grafana -f grafana-values.yaml oci://registry-1.docker.io/bitnamicharts/grafana -n grafana --create-namespace
+echo "Updating/Installing Grafana service completed..."
 echo "----------------------------------------------------"
 
 # Install/Update Backend services repo 

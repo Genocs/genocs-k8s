@@ -1,0 +1,61 @@
+replicaCount: 1
+
+image:
+  repository: grafana/grafana
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: grafana.local
+      paths: ["/"]
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClassName: ""
+
+adminUser: admin
+adminPassword: admin
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources: []
+
+dashboardProviders: {}
+dashboards: {}
+
+env: []
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: ""
+
+securityContext:
+  runAsUser: 472
+  fsGroup: 472
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
