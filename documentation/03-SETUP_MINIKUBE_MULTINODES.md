@@ -59,6 +59,7 @@ sudo mv ./kind /usr/local/bin/kind
 
 Create a configuration file (e.g., kind-config.yaml):
 ```yaml
+
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -66,13 +67,13 @@ nodes:
   - role: worker
   - role: worker
 ```
-Save the above configuration in a file named `kind-config.yaml`. This configuration defines a cluster with one control plane node and two worker nodes.
+Save the above configuration in a file named `kind-cluster-config.yaml`. This configuration defines a cluster with one control plane node and two worker nodes.
 
 
 Then, create the cluster:
 ```bash
 # Create the Kind cluster using the configuration file
-kind create cluster --config kind-config.yaml
+kind create cluster --config ./05-kind-multinode/kind-cluster-config.yaml
 ```
 
 Verify the Cluster
@@ -82,5 +83,15 @@ kubectl cluster-info
 # List the nodes in the cluster
 kubectl get nodes
 ```
+# Rename Nodes in Kind
+To rename a node in Kind, you can use the `kind get nodes` command to list the nodes and then use `kubectl label` to add a label to the node. However, renaming nodes directly is not supported in Kind. Instead, you can create a new cluster with the desired node names.
+
+kubectl label node <node-name> new-name=<desired-name>
+
+kubectl label node gnx-cluster-worker node-role.kubernetes.io/worker=worker
+
+
+kubectl label node gnx-cluster-worker new-name=gnx-cluster-worker1
+
 
 Minikube is excellent for single-node setups, but for multi-node clusters, Kind or K3d are more practical and efficient. Let me know if you'd like further assistance! 😊

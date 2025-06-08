@@ -1,0 +1,102 @@
+# This YAML file sets up a Kubernetes deployment with a web application and an Nginx sidecar for TLS termination.
+# The Nginx sidecar handles HTTPS requests and forwards them to the web application over HTTP and WebSocket (WS).
+---
+# The service definition for the web application
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+spec:
+  selector:
+    app: web-app
+  ports:
+    - protocol: TCP
+      port: 443 # Exposed port for HTTPS/WSS
+      targetPort: 443 # Port on the sidecar Nginx container
+  type: ClusterIP # Change to LoadBalancer if you need external access
+
+---
+# The deployment definition for the web application with Nginx sidecar
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-with-sidecar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-application 
+          image: your-app-image:latest # Replace with your application container
+          ports:
+            - containerPort: 8080 # For HTTP
+            - containerPort: 8081 # For WS
+        - name: nginx-sidecar # Nginx sidecar for TLS termination
+          image: nginx:latest
+          ports:
+            - containerPort: 443 # External HTTPS/WSS port
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/conf.d
+            - name: ssl-certs-volume
+              mountPath: /etc/nginx/certs
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config
+        - name: ssl-certs-volume
+          secret:
+            secretName: app-ssl-certs-secret # Contains your TLS certificate and key      
+
+---
+# nginx sidecar configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  default.conf: |
+# For HTTPS to HTTP
+server {
+    listen 443 ssl;
+    server_name your.domain.com;
+
+    ssl_certificate /etc/nginx/certs/server.crt;
+    ssl_certificate_key /etc/nginx/certs/server.key;
+
+    location / {
+        proxy_pass http://localhost:8080; # Your application's HTTP port
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # For WSS to WS
+    location /ws {
+        proxy_pass http://localhost:8081; # Your application's WS port
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 86400; # Keep WebSocket connections open
+    }
+}
+
+---
+# Secret for TLS certificates used by the Nginx sidecar
+# Replace <base64_encoded_cert> and <base64_encoded_key> with your actual base64 encoded TLS certificate and key.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-ssl-certs-secret
+type: kubernetes.io/tls
+data:
+  tls.crt: <base64_encoded_cert>
+  tls.key: <base64_encoded_key>

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-configmap
+data:
+  # Replace with your application configuration
+  app.properties: |
+    # Application properties
+    server.port=8080
+    server.ssl.enabled=true
+    server.ssl.key-store=classpath:keystore.p12
+    server.ssl.key-store-password=changeit
+    server.ssl.key-store-type=PKCS12
+    server.ssl.trust-store=classpath:truststore.p12
+    server.ssl.trust-store-password=changeit
+    # Additional application settings can be added here

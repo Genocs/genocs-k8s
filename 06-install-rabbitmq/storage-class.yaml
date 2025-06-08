@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage # rabbitmq-storage-class
+provisioner: kubernetes.io/no-provisioner # Change this to your cloud provider or CSI driver [available options: aws-ebs, gce-pd, azure-disk, etc.]
+volumeBindingMode: WaitForFirstConsumer

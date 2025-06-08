@@ -1,0 +1,130 @@
+---
+# The service definition for the web application
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+spec:
+  selector:
+    app: web-app
+  ports:
+    - protocol: TCP
+      port: 443 # Exposed port for HTTPS/WSS
+      targetPort: 443 # Port on the sidecar Envoy container
+  type: ClusterIP # Change to LoadBalancer if you need external access
+
+---
+# This YAML file defines a Kubernetes Pod with a web application and an Envoy sidecar for TLS termination.
+# The Envoy sidecar handles HTTPS requests and forwards them to the web application over HTTP.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-app-with-sidecar
+spec:
+  containers:
+    - name: web-app
+      image: your-app-image:latest # Replace with your application image
+      ports:
+        - containerPort: 8080 # Your app listens on HTTP 8080
+
+    - name: envoy-proxy-sidecar
+      image: envoyproxy/envoy:v1.27.0 # Use an appropriate Envoy version
+      ports:
+        - containerPort: 443 # Sidecar listens on HTTPS 443
+        - containerPort: 80 # Sidecar also listens on HTTP 80 (if needed for internal)
+      volumeMounts:
+        - name: envoy-config-volume
+          mountPath: /etc/envoy
+        - name: envoy-certs-volume
+          mountPath: /etc/ssl/certs/envoy
+  volumes:
+    - name: envoy-config-volume
+      configMap:
+        name: envoy-config # Contains Envoy's configuration
+    - name: envoy-certs-volume
+      secret:
+        secretName: app-ssl-certs-secret # Contains your TLS certificate and key
+
+---
+# Envoy configuration for TLS termination
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envoy-config
+data:
+  envoy.yaml: |
+# /etc/envoy/envoy.yaml
+static_resources:
+  listeners:
+    - name: ingress_listener
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 443 }
+      filter_chains:
+        - transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              common_tls_context:
+                tls_certificates:
+                  - certificate_chain:
+                      { filename: "/etc/ssl/certs/envoy/tls.crt" }
+                    private_key: { filename: "/etc/ssl/certs/envoy/tls.key" }
+          filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: backend
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
+                          route: { cluster: local_service }
+                http_filters:
+                  - name: envoy.filters.http.router
+  clusters:
+    - name: local_service
+      connect_timeout: 0.25s
+      type: LOGICAL_DNS # Or STATIC, or other discovery types
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: local_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address: { address: 127.0.0.1, port_value: 8080 } # Your app's HTTP port
+
+  app.properties: |
+    # Application properties
+    server.port=8080
+    server.ssl.enabled=true
+    server.ssl.key-store=classpath:keystore.p12
+    server.ssl.key-store-password=changeit
+    server.ssl.key-store-type=PKCS12
+    server.ssl.trust-store=classpath:truststore.p12
+    server.ssl.trust-store-password=changeit
+    # Additional application settings can be added here
+
+---
+# Secret containing TLS certificates for Envoy sidecar
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-ssl-certs-secret
+type: kubernetes.io/tls
+data:
+  tls.crt: <base64_encoded_cert>
+  tls.key: <base64_encoded_key>
+  ca.crt: <base64-encoded-ca-cert> # Optional, if you have a CA certificate
+  # If you have a client certificate, you can add it as well
+  # client.crt: <base64-encoded-client-cert>
+  # client.key: <base64-encoded-client-key>
+
+  # If you have a CA bundle, you can add it as well
+  # ca-bundle.crt: <base64-encoded-ca-bundle>
+
+  # If you have a custom CA certificate, you can add it as well
+  # custom-ca.crt: <base64-encoded-custom-ca-cert>

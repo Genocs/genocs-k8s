@@ -1,0 +1,15 @@
+# This file is meant to be used with the `helm install` parameter file.
+# It contains the settings for the RabbitMQ Helm chart.
+
+version: "16.0.6" # Specify the version of the RabbitMQ Helm chart
+
+# RabbitMQ Helm Chart Settings
+replicaCount: 3
+
+auth:
+  password: guest # Change this to a secure password
+  username: guest # Default username
+  erlangCookie: cookie123 # Change this to a secure Erlang cookie
+
+metrics:
+  enabled: false # Enable Prometheus metrics

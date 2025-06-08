@@ -1,0 +1,85 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-sc
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+
+# Config map example
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-config-map
+data:
+  APP_COLOR: "darkblue"
+  APP_OTHER: "disregard"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+    - name: webapp
+      image: kodecloud/event-simulator
+      volumeMounts:
+        - mountPath: log
+          name: log-volume
+  volumes:
+    - name: log-volume
+      hostPath:
+      path: /var/log/webapp
+  # add environment variables from config map
+  envFrom:
+    - configMapRef:
+        name: webapp-config-map
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-log
+spec:
+  capacity:
+    storage: 10oMi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /pv/log
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-log-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: gnx-sc
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-claim
+spec:
+  containers:
+    - name: webapp-claim
+      image: kodecloud/event-simulator
+      volumeMounts:
+        - mountPath: log
+          name: log-volume
+  volumes:
+    - name: log-volume
+      persistentVolumeClaim:
+        claimName: claim-log-1
+
+---
+

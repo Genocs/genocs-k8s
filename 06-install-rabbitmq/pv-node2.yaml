@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-rabbitmq-node2
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage # Change this to your storage class name
+  # If you are using a cloud provider, change the provisioner accordingly
+  local:
+    # This path should match the path in your kind cluster configuration
+    # or the path where you want to store RabbitMQ data on the host.
+    path: /mnt/pv-rabbitmq
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node2 # Change this to the name of your worker node
