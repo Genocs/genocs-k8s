@@ -1,9 +1,21 @@
 # Genocs Library K8s walkthrough
 
-This repository contains the solution for the Genocs Library K8s challenge, which involves setting up a Kubernetes cluster using MicroK8s, deploying a web application, and managing it with Helm and ArgoCD. The solution also includes the use of an internal API gateway along with a set of other services as: identity service. 
+This repository contains Genocs K8s challenge, which involves setting up a Kubernetes cluster.
+
+The solution is designed to be run on an Ubuntu 24.04.1 LTS VM using Windows Subsystem for Linux (WSL2).
+The solution can be used on bare Linux or on a VM running on a cloud provider like AWS, Azure, or GCP.
+
+# Genocs Library K8s Challenge
+
+you can setup the cluster by using different methods, like using MicroK8s, Minikube, or any other Kubernetes distribution. The solution is based on the Genocs Library, which provides a set of tools and libraries to build and deploy applications on Kubernetes.
+
+The walkthrough includes setting up helm and ArgoCD for managing the application deployment.
+
+
+ using MicroK8s, deploying a web application, and managing it with Helm and ArgoCD. The solution also includes the use of an internal API gateway along with a set of other services as: identity service. 
 Setup of other resources are also in place as external MongoDB database, RabbitMQ message broker, Nginx AGIC for ingress, an a bunch of Kubernetes resources like Secrets and ConfigMaps and so on.
 
-The solution is designed to be run on an Ubuntu 24.04.1 LTS VM using Windows Subsystem for Linux (WSL2). It leverages MicroK8s for Kubernetes management and follows best practices for application deployment and management in a Kubernetes environment.
+ It leverages MicroK8s for Kubernetes management and follows best practices for application deployment and management in a Kubernetes environment.
 
 ## Introduction
 

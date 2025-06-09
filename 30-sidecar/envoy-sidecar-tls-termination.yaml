@@ -53,37 +53,37 @@ metadata:
   name: envoy-config
 data:
   envoy.yaml: |
-# /etc/envoy/envoy.yaml
-static_resources:
-  listeners:
-    - name: ingress_listener
-      address:
-        socket_address: { address: 0.0.0.0, port_value: 443 }
-      filter_chains:
-        - transport_socket:
-            name: envoy.transport_sockets.tls
-            typed_config:
-              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-              common_tls_context:
-                tls_certificates:
-                  - certificate_chain:
-                      { filename: "/etc/ssl/certs/envoy/tls.crt" }
-                    private_key: { filename: "/etc/ssl/certs/envoy/tls.key" }
-          filters:
-            - name: envoy.filters.network.http_connection_manager
-              typed_config:
-                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-                stat_prefix: ingress_http
-                route_config:
-                  name: local_route
-                  virtual_hosts:
-                    - name: backend
-                      domains: ["*"]
-                      routes:
-                        - match: { prefix: "/" }
-                          route: { cluster: local_service }
-                http_filters:
-                  - name: envoy.filters.http.router
+    # /etc/envoy/envoy.yaml
+    static_resources:
+      listeners:
+        - name: ingress_listener
+          address:
+            socket_address: { address: 0.0.0.0, port_value: 443 }
+          filter_chains:
+            - transport_socket:
+                name: envoy.transport_sockets.tls
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+                  common_tls_context:
+                    tls_certificates:
+                      - certificate_chain:
+                          { filename: "/etc/ssl/certs/envoy/tls.crt" }
+                        private_key: { filename: "/etc/ssl/certs/envoy/tls.key" }
+              filters:
+                - name: envoy.filters.network.http_connection_manager
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                    stat_prefix: ingress_http
+                    route_config:
+                      name: local_route
+                      virtual_hosts:
+                        - name: backend
+                          domains: ["*"]
+                          routes:
+                            - match: { prefix: "/" }
+                              route: { cluster: local_service }
+                    http_filters:
+                      - name: envoy.filters.http.router
   clusters:
     - name: local_service
       connect_timeout: 0.25s
