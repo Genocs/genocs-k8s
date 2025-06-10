@@ -1,4 +1,4 @@
-# Generate self signed certificate for local development with SAN
+# Generate self signed certificate with SAN
 
 In order to generate a self-signed certificate with Subject Alternative Name (SAN) for local development, you can follow these steps:
 

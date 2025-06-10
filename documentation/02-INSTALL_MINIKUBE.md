@@ -1,13 +1,11 @@
-# How to Install Kubernetes on WSL2 using Minikube
-This guide will help you set up Kubernetes on your Windows machine using WSL2 and Minikube.
+# How to Install Kubernetes using Minikube
+This guide will help you set up Kubernetes cluster on your local machine using Minikube. Minikube is a tool that makes it easy to run Kubernetes locally.
+
 
 ## Prerequisites
 
-Please ensure you have wsl2 installed on your Windows machine. If you haven't done so, follow the instructions in the [Install WSL2](01-INSTALL_WSL2.md) guide.
 
-
-
-### Install Docker, Minikube, and Kubectl
+## Install Docker, Minikube, and Kubectl
 Update the package database and install prerequisites
 ```bash
 # Update the package database and install prerequisites
@@ -41,7 +39,7 @@ sudo apt-get install -y docker-ce
 sudo usermod -aG docker $USER && newgrp docker
 ```
 
-# Install Minikube
+## Install Minikube
 
 Follow these steps to install Minikube on Ubuntu running on WSL2:
 
@@ -59,7 +57,7 @@ sudo mv ./minikube /usr/local/bin/
 minikube config set driver docker
 ```
 
-### Install Kubectl
+## Install Kubectl
 
 To install `kubectl`, the command-line tool for interacting with Kubernetes clusters, follow these steps:
 
@@ -77,10 +75,10 @@ sudo mv ./kubectl /usr/local/bin/
 kubectl version --client
 ```
 
-### Start Minikube
-Open your WSL2 Ubuntu terminal and run the following command to start 
+## Start Minikube
+Open your terminal run the following command to start:
 ```bash
-# Start Minikube with the Docker driver
+# Option 1: Start Single node Minikube cluster with the Docker driver
 minikube start --driver=docker
 ```
 
@@ -102,7 +100,7 @@ apiserver: Running
 kubeconfig: Configured
 ```
 
-### Configure Kubectl to Use Minikube
+## Configure Kubectl to Use Minikube
 To configure `kubectl` to use Minikube, run the following command:
 
 ```bash
@@ -131,9 +129,9 @@ kube-system   kube-scheduler-minikube            1/1     Running   0          2m
 kube-system   storage-provisioner                1/1     Running   0          2m
 ```
 
-You have successfully installed and configured Kubernetes on the local system using WSL2.
+You have successfully installed and configured Kubernetes on the local system.
 
-### Step 6: Setup and Accessing the Kubernetes Dashboard
+## Setup and Accessing the Kubernetes Dashboard
 
 To set up and access the Kubernetes dashboard, follow these steps:
 ```bash
@@ -150,45 +148,43 @@ minikube dashboard
 This command will open the Kubernetes dashboard in your default web browser.
 
 
-### Stopping and Restarting Minikube
+## Stopping and Restarting Minikube
 To stop Minikube, you can run:
-
 ```bash
 minikube stop
 ```
 
 To restart Minikube, you can run:
-
 ```bash
 minikube start
 ```
 
-### Deleting Minikube
+## Deleting Minikube
 To delete your Minikube cluster, you can run:
-
 ```bash
 minikube delete
 ```
 This command will remove the Minikube cluster and all associated resources.
 
-### Updating Minikube
+## Updating Minikube
 To update Minikube to the latest version, you can run:
-
 ```bash
 minikube update-check
 minikube update
 ```
+
 This command will check for updates and apply them if available.
 
-### Uninstalling Minikube
+## Uninstalling Minikube
 To uninstall Minikube, you can run the following command:
 
 ```bash
 sudo rm -rf /usr/local/bin/minikube
 ```
+
 This command will remove the Minikube binary from your system.
 
-### Uninstalling Docker
+## Uninstalling Docker
 To uninstall Docker, you can run the following commands:
 
 ```bash
@@ -244,4 +240,4 @@ To have Minikube start automatically as a service when your WSL2 Ubuntu instance
    sudo systemctl status minikube.service
    ```
 
-Now, Minikube will start automatically with your WSL2 Ubuntu session.
+Now, Minikube will start automatically with your Ubuntu session.

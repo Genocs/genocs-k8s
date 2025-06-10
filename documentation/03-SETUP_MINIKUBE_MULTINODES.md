@@ -1,8 +1,8 @@
 # Setting Up Multi-Node Clusters
 
-Minikube is primarily designed for local Kubernetes development and typically supports single-node clusters. However, you can simulate a multi-node cluster by creating multiple Minikube instances or using other tools like [Kind](https://kind.sigs.k8s.io/), [Minikube](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/#hello-deployment.yaml) or K3d for true multi-node setups. 
+Minikube is primarily designed for local Kubernetes development and typically supports single-node clusters. However, you can simulate a multi-node cluster by creating multiple Minikube instances or using other tools like [Kind](https://kind.sigs.k8s.io/), [Minikube](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/#hello-deployment.yaml) or [K3d](https://k3d.io/) for true multi-node setups. 
 
-There are several ways to set up multi-node clusters locally, but Minikube is not the best choice for this purpose. Instead, you can use tools like [Kind](https://kind.sigs.k8s.io/) or K3d, which are specifically designed for creating multi-node Kubernetes clusters in a more straightforward manner.
+There are several ways to set up multi-node clusters locally, but Minikube is not the best choice for this purpose. Instead, you can use tools like [Kind](https://kind.sigs.k8s.io/) or [K3d](https://k3d.io/), which are specifically designed for creating multi-node Kubernetes clusters in a more straightforward manner.
 
 
 ## Minikube
@@ -38,6 +38,8 @@ kubectl config use-context node3
 ```
 
 Networking Between Nodes: Minikube nodes are isolated by default. To enable communication, you would need to configure networking manually, which can be complex. Alternatively, consider using a tool like Kind or K3d for a more seamless multi-node experience.
+
+Minikube is excellent for single-node setups, but for multi-node clusters, Kind or K3d are more practical and efficient.
 
 
 # Kind
@@ -94,4 +96,4 @@ kubectl label node gnx-cluster-worker node-role.kubernetes.io/worker=worker
 kubectl label node gnx-cluster-worker new-name=gnx-cluster-worker1
 
 
-Minikube is excellent for single-node setups, but for multi-node clusters, Kind or K3d are more practical and efficient. Let me know if you'd like further assistance! 😊
+ Let me know if you'd like further assistance! 😊

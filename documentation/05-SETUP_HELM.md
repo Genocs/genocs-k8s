@@ -1,4 +1,3 @@
-
 ## Setup Helm
 Helm is a package manager for Kubernetes that helps you manage Kubernetes applications. It allows you to define, install, and upgrade even the most complex Kubernetes applications. Follow these steps to use Helm with your MicroK8s cluster:
 
@@ -87,9 +86,6 @@ In case you want to run the above commands, all togheter, follow the command bel
 # Everything in one command
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 ```
-
-
-
 
 ----
 # Setup Kubernetes Dashboard
@@ -285,22 +281,6 @@ watch microk8s kubectl get all
 
 microk8s kubectl port-forward -n default service/microbot 80:80 --address 0.0.0.0
 ```
-
-To run the application, you can use the following commands:
-``` bash
-# Use yaml files
-microk8s kubectl apply -f ./deployment/namespace.yml
-microk8s kubectl apply -f ./deployment/secrets.yml
-microk8s kubectl apply -f ./deployment/nginx-ingress.yml
-microk8s kubectl apply -f ./deployment/cert-manager.yml
-microk8s kubectl apply -f ./deployment/apigateway.yml
-microk8s kubectl apply -f ./deployment/identities.yml
-microk8s kubectl apply -f ./deployment/products.yml
-microk8s kubectl apply -f ./deployment/orders.yml
-microk8s kubectl apply -f ./deployment/notifications.yml
-```
-
-or alternatively, you can use the following command to deploy the application:
 
 
 This section describe the repository folders along with a brief description of their contents:

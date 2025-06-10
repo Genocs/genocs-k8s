@@ -1,11 +1,11 @@
-# How to Install WSL2 on Windows and Set Up Kubernetes with Minikube
+# Install WSL2
 This file provides a step-by-step guide to install WSL2 on Windows, 
 
 ## Prerequisites
 - Windows 10 or later
 - Virtualization enabled in BIOS
 
-## Install WSL2 on Windows
+## Installation Steps
    - Follow the instructions from the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2.
 
 Other option could be to use Microsoft Store to install Ubuntu:
@@ -37,12 +37,36 @@ Other option could be to use Microsoft Store to install Ubuntu:
      wsl --install -d Ubuntu-24.04
      ```
 
+   - If you want to check the WSL version
+     ```bash
+     wsl --list --all --verbose
+     ```
+     You should see something like this:
+     ```plaintext
+       NAME                   STATE           VERSION
+     * Ubuntu-24.04           Running         2
+     ```
+
+   - If you want to check the WSL version of the default distro
+     ```bash
+     wsl --status
+     ```
+     You should see something like this:
+     ```plaintext
+     Default Distribution: Ubuntu-22.04
+     Default Version: 2
+     ```
+     
+     If you want to setup the default distro to Ubuntu-24.04
+     ```bash
+     wsl --set-default Ubuntu-24.04
+     ```
+
 
 ### Set Up Ubuntu and enable systemd
 After the installation is complete, you will need to set up Ubuntu. Open the Ubuntu app from the Start menu or type `wsl` in PowerShell to launch it.
 ```bash
-wsl
-# If you want to check the installed version of Ubuntu
+# Get the Ubuntu version
 lsb_release -a
 ```
 You should see something like this:
@@ -52,31 +76,6 @@ Distributor ID: Ubuntu
 Description:    Ubuntu 24.04.2 LTS
 Release:        24.04
 Codename:       noble
-```
-
-If you want to check the WSL version
-```bash
-wsl --list --all --verbose
-```
-You should see something like this:
-```plaintext
-  NAME                   STATE           VERSION
-* Ubuntu-24.04           Running         2
-```
-
-If you want to check the WSL version of the default distro
-```bash
-wsl --status
-```
-You should see something like this:
-```plaintext
-Default Distribution: Ubuntu-22.04
-Default Version: 2
-```
-
-If you want to setup the default distro to Ubuntu-24.04
-```bash
-wsl --set-default Ubuntu-24.04
 ```
 
 After installing, set up Ubuntu by creating a username and password in the first-time setup.

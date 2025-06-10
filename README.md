@@ -1,13 +1,13 @@
-# Genocs Library K8s walkthrough
+# K8s walkthrough
 
-This repository contains Genocs K8s challenge, which involves setting up a Kubernetes cluster.
+This repository contains setting up a Kubernetes cluster.
 
 The solution is designed to be run on an Ubuntu 24.04.1 LTS VM using Windows Subsystem for Linux (WSL2).
 The solution can be used on bare Linux or on a VM running on a cloud provider like AWS, Azure, or GCP.
 
 # Genocs Library K8s Challenge
 
-you can setup the cluster by using different methods, like using MicroK8s, Minikube, or any other Kubernetes distribution. The solution is based on the Genocs Library, which provides a set of tools and libraries to build and deploy applications on Kubernetes.
+You can setup the cluster by using different methods, like using MicroK8s, Minikube, or any other Kubernetes distribution. The solution is based on the Genocs Library, which provides a set of tools and libraries to build and deploy applications on Kubernetes.
 
 The walkthrough includes setting up helm and ArgoCD for managing the application deployment.
 

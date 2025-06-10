@@ -1,10 +1,10 @@
-# Kubernetes Cluster Setup with MicroK8s on Ubuntu WSL2
+# Kubernetes Cluster Setup with MicroK8s on Ubuntu
 
 ## Prerequisites
 Before you begin, ensure you have the following prerequisites:
-- **Ubuntu WSL2 VM**: Ensure you have a working Ubuntu WSL2 instance.
+- **Ubuntu WSL2 VM**: Ensure you have a working Ubuntu instance.
 
-1. First, install MicroK8s on your Ubuntu WSL2 VM
+1. First, install MicroK8s on your Ubuntu system:
    ``` bash
    sudo snap install microk8s --classic
    ```
@@ -52,35 +52,35 @@ Before you begin, ensure you have the following prerequisites:
    microk8s dashboard-proxy
    ```
 
-9. For WSL2 specific configuration, you'll need to set up port forwarding from Windows to WSL2. You can do this in PowerShell with either of these methods:
-   ``` PowerShell
-   ## Forward WSL2 IP connections to Windows host 
-   
-   ### Option 1
-   wsl hostname -I
-   netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=<WSL2_IP>
-   
-   ### Option 2
-   netsh interface portproxy set v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=$(wsl hostname -I)
+9. To verify your installation, you can run these commands:
+   ``` bash
+   # Check cluster status
+   microk8s kubectl get nodes
+ 
+   # Check all resources
+   microk8s kubectl get all --all-namespaces
+ 
+   # Create a test deployment by means of an Nginx image
+   # This will create a simple Nginx deployment
+   microk8s kubectl create deployment nginx --image=nginx
    ```
 
-10. To verify your installation, you can run these commands:
-    ``` bash
-    # Check cluster status
-    microk8s kubectl get nodes
- 
-    # Check all resources
-    microk8s kubectl get all --all-namespaces
- 
-    # Create a test deployment by means of an Nginx image
-    # This will create a simple Nginx deployment
-    microk8s kubectl create deployment nginx --image=nginx
-    ```
-
-11. To stop MicroK8s when needed:
+10. To stop MicroK8s when needed:
     ``` bash
     # Stop Microk8s
     microk8s stop
+    ```
+
+11. For WSL2 specific configuration, you'll need to set up port forwarding from Windows to WSL2. You can do this in PowerShell with either of these methods:
+    ``` PowerShell
+    ## Forward WSL2 IP connections to Windows host 
+   
+    ### Option 1
+    wsl hostname -I
+    netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=<WSL2_IP>
+   
+    ### Option 2
+    netsh interface portproxy set v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=$(wsl hostname -I)
     ```
 
  **Important Notes**
