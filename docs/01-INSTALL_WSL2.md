@@ -1,14 +1,14 @@
 # Install WSL2
-This file provides a step-by-step guide to install WSL2 on Windows, 
+This file provides a step-by-step guide to install WSL2 on Windows.
 
 ## Prerequisites
 - Windows 10 or later
 - Virtualization enabled in BIOS
 
 ## Installation Steps
-   - Follow the instructions from the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2.
+Follow the instructions from the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2.
 
-Other option could be to use Microsoft Store to install Ubuntu:
+Another option could be to use Microsoft Store to install Ubuntu:
 
 1. **Install Ubuntu from Microsoft Store**:
    - Open Microsoft Store and search for "Ubuntu"
@@ -78,7 +78,7 @@ Release:        24.04
 Codename:       noble
 ```
 
-After installing, set up Ubuntu by creating a username and password in the first-time setup.
+After installing, complete the initial Ubuntu setup by creating a username and password when prompted.
 
 Now, follow these steps:
 

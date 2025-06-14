@@ -1,6 +1,8 @@
 # How to Install Kubernetes using Minikube
-This guide will help you set up Kubernetes cluster on your local machine using Minikube. Minikube is a tool that makes it easy to run Kubernetes locally.
 
+Minikube is primarily designed for local Kubernetes development and typically supports single-node clusters.
+
+This guide will help you set up Kubernetes cluster on your local machine using Minikube.
 
 ## Prerequisites
 

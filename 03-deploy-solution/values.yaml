@@ -1,7 +1,0 @@
-Namespace: gnx-apps
-Gateway: apigateway-webapi
-Ingress: gnx-ingress
-cpu_requests: "100m"
-memory_requests: "100Mi"
-cpu_limits: "100m"
-memory_limits: "100Mi"
