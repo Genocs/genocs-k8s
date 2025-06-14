@@ -1,4 +1,4 @@
-# RabbitMQ High Availability (HA) Setup on Kubernetes
+# RabbitMQ on Kubernetes
 
 RabitMQ is a widely used open-source message broker that supports multiple messaging protocols. It is designed for high availability and scalability, making it suitable for various applications, including microservices architectures.
 

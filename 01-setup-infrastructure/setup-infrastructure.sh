@@ -3,7 +3,9 @@
 # Variables
 MONGODB_VALUES_FILE="./mongodb-values.yaml"   # Path to your MongoDB custom values file
 RABBITMQ_VALUES_FILE="./rabbitmq-values.yaml" # Path to your RabbitMQ custom values file
-GRAFANA_VALUES_FILE="./grafana-values.yaml" # Path to your Grafana custom values file
+DAPR_VALUES_FILE="./dapr-values.yaml"         # Path to your Dapr custom values file
+ARGOCD_VALUES_FILE="./argocd-values.yaml"     # Path to your ArgoCD custom values file
+GRAFANA_VALUES_FILE="./grafana-values.yaml"   # Path to your Grafana custom values file
 
 # Check if the MongoDB values file exists
 if [[ ! -f "$MONGODB_VALUES_FILE" ]]; then
@@ -14,6 +16,18 @@ fi
 # Check if the RABBITMQ values file exists
 if [[ ! -f "$RABBITMQ_VALUES_FILE" ]]; then
     echo "Custom values file $RABBITMQ_VALUES_FILE not found!"
+    exit 1
+fi
+
+# Check if the DAPR values file exists
+if [[ ! -f "$DAPR_VALUES_FILE" ]]; then
+    echo "Custom values file $DAPR_VALUES_FILE not found!"
+    exit 1
+fi
+
+# Check if the ArgoCD values file exists
+if [[ ! -f "$ARGOCD_VALUES_FILE" ]]; then
+    echo "Custom values file $ARGOCD_VALUES_FILE not found!"
     exit 1
 fi
 
@@ -39,6 +53,19 @@ helm upgrade --install mongodb -f mongodb-values.yaml oci://registry-1.docker.io
 echo "Updating/Installing Mongodb service completed..."
 echo "----------------------------------------------------"
 
+# Install/Update Dapr service
+echo "Updating/Installing Dapr service..."
+helm upgrade --install dapr -f dapr-values.yaml oci://registry-1.docker.io/bitnamicharts/dapr -n dapr --create-namespace
+echo "Updating/Installing Dapr service completed..."
+echo "----------------------------------------------------"
+
+Install/Update ArgoCD service
+echo "Updating/Installing ArgoCD service..."
+helm upgrade --install argocd -f argocd-values.yaml oci://registry-1.docker.io/bitnamicharts/argo-cd -n argocd --create-namespace
+echo "Updating/Installing ArgoCD service completed..."
+echo "----------------------------------------------------"
+
+
 # Install/Update Grafana service
 echo "Updating/Installing Grafana service..."
 helm upgrade --install grafana -f grafana-values.yaml oci://registry-1.docker.io/bitnamicharts/grafana -n grafana --create-namespace
@@ -62,4 +89,9 @@ sleep 30
 echo "Verifying the installation..."
 kubectl get pods --namespace mongodb
 kubectl get pods --namespace rabbitmq
+kubectl get pods --namespace dapr
+kubectl get pods --namespace argocd
+kubectl get pods --namespace grafana
+echo "Installation verification completed."
+echo "----------------------------------------------------"
 

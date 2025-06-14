@@ -68,7 +68,7 @@ This repository contains the following documentation:
 | [01-INSTALL_WSL2](./docs/01-INSTALL_WSL2.md) | Step-by-step guide to install WSL2 on Windows. |
 | [02-INSTALL_MINIKUBE](./docs/02-INSTALL_MINIKUBE.md) | Step-by-step guide to setup a Kubernetes cluster using Minikube. |
 | [03-INSTALL_KIND](./docs/03-INSTALL_KIND.md) | Step-by-step guide to setup a Kubernetes cluster using KiNd. |
-| [04-INSTALL_MICROK8S](./docs/04-INSTALL_MICROK8S.md) | Step-by-step guide to setup a Kubernetes cluster using MicroK8s. |
+| [04-INSTALL_MICRO_K8S](./docs/04-INSTALL_MICRO_K8S.md) | Step-by-step guide to setup a Kubernetes cluster using MicroK8s. |
 | [05-INSTALL_HELM](./docs/05-INSTALL_HELM.md) | Step-by-step guide to install Helm on the Kubernetes cluster. |
 | [06-INSTALL_DAPR](./docs/06-INSTALL_DAPR.md) | Step-by-step guide to install Dapr on the Kubernetes cluster. |
 | [07-INSTALL_RABBITMQ](./docs/07-INSTALL_RABBITMQ.md) | Step-by-step guide to install RabbitMQ on the Kubernetes cluster. |
