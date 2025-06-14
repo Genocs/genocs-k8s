@@ -47,6 +47,7 @@ echo "Updating/Installing RabbitMQ service..."
 helm upgrade --install rabbitmq -f rabbitmq-values.yaml oci://registry-1.docker.io/bitnamicharts/rabbitmq -n rabbitmq --create-namespace
 echo "Updating/Installing RabbitMQ service completed..."
 echo "----------------------------------------------------"
+
 # Install/Update Helm Mongodb repo 
 echo "Udating/Installing Mongodb service..."
 helm upgrade --install mongodb -f mongodb-values.yaml oci://registry-1.docker.io/bitnamicharts/mongodb -n mongodb --create-namespace
@@ -55,7 +56,12 @@ echo "----------------------------------------------------"
 
 # Install/Update Dapr service
 echo "Updating/Installing Dapr service..."
-helm upgrade --install dapr -f dapr-values.yaml oci://registry-1.docker.io/bitnamicharts/dapr -n dapr --create-namespace
+
+# Add the official Dapr Helm chart.
+helm repo add dapr https://dapr.github.io/helm-charts/
+helm repo update
+
+helm install dapr dapr/dapr --namespace dapr --create-namespace --values dapr-values.yaml --wait
 echo "Updating/Installing Dapr service completed..."
 echo "----------------------------------------------------"
 
@@ -94,4 +100,15 @@ kubectl get pods --namespace argocd
 kubectl get pods --namespace grafana
 echo "Installation verification completed."
 echo "----------------------------------------------------"
+
+echo "To access the ArgoCD UI, run the following command:"
+echo "kubectl port-forward svc/argocd-server -n argocd 8080:443"
+echo "To access the Grafana UI, run the following command:"
+echo "kubectl port-forward svc/grafana -n grafana 3000:80"
+echo "To access the RabbitMQ UI, run the following command:"
+echo "kubectl port-forward svc/rabbitmq -n rabbitmq 15672:15672"
+echo "To access the MongoDB UI, run the following command:"
+echo "kubectl port-forward svc/mongodb -n mongodb 27017:27017"
+echo "To access the Dapr Operator, run the following command:"
+echo "kubectl port-forward dapr-operator-<your_id> 40000:40000 -n dapr
 

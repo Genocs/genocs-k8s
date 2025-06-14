@@ -1,0 +1,27 @@
+dapr_operator:
+  runAsNonRoot: false
+  logLevel: DEBUG
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: 500m
+
+dapr_dashboard:
+  runAsNonRoot: false
+  logLevel: DEBUG
+  serviceType: NodePort # Allows retrieving the dashboard url by running the command "minikube service list"
+
+dapr_placement:
+  runAsNonRoot: false
+  logLevel: DEBUG
+
+dapr_sentry:
+  runAsNonRoot: false
+  logLevel: DEBUG
+
+dapr_sidecar_injector:
+  runAsNonRoot: false
+  logLevel: DEBUG
+
+global:
+  logAsJson: true

@@ -57,11 +57,25 @@ Todo:
 - Use LXC runtime to create multiple nodes
 
 
-# Documentation
+## General concepts
+
+You can use different methods to setup a Kubernetes cluster, like using KiNd, Minikube, MicroK8s or any other Kubernetes cluster setup distribution.
+
+here is a brief overview of the different methods:
+- **KiNd (Kubernetes in Docker)**: A tool for running local Kubernetes clusters using Docker container "nodes". It is useful for testing and development purposes.
+- **Minikube**: A tool that makes it easy to run Kubernetes locally. It runs a single-node Kubernetes cluster inside a VM on your laptop or in the cloud.
+- **MicroK8s**: A lightweight, production-grade Kubernetes distribution that runs on Linux. It is designed for IoT and edge devices, but can also be used for local development.
+
+
+more information about the different methods can be found in the [Kubernetes documentation](https://kubernetes.io/docs/home/).
+
+
+
+## Documentation
 This repository contains the following documentation:
 
 
-## Table of Contents
+### Table of Contents
 
 | Topic | Description |
 |---------|-------------|
