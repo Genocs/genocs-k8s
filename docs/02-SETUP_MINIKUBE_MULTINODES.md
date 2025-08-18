@@ -1,13 +1,13 @@
 # Setting Up Multi-Node Clusters
 
-Minikube is primarily designed for local Kubernetes development and typically supports single-node clusters. However, you can simulate a multi-node cluster by creating multiple Minikube instances or using other tools like [Kind](https://kind.sigs.k8s.io/), [Minikube](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/#hello-deployment.yaml) or [K3d](https://k3d.io/) for true multi-node setups. 
+Minikube is primarily designed for local Kubernetes development and typically supports single-node clusters. However, you can simulate a multi-node cluster by creating multiple Minikube instances or using other tools like [Kind](https://kind.sigs.k8s.io/), [Minikube](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/#hello-deployment.yaml) or [K3d](https://k3d.io/) for true multi-node setups.
 
 There are several ways to set up multi-node clusters locally, but Minikube is not the best choice for this purpose. Instead, you can use tools like [Kind](https://kind.sigs.k8s.io/) or [K3d](https://k3d.io/), which are specifically designed for creating multi-node Kubernetes clusters in a more straightforward manner.
-
 
 ## Minikube
 
 To simulate a multi-node cluster with Minikube, you can start multiple Minikube instances with different profiles. Here's how to do it:
+
 ```bash
 minikube start --nodes 3 -p multinode-demo
 ```
@@ -18,6 +18,7 @@ Below is a guide to simulate a multi-node cluster with Minikube:
 - Start the First Node (Control Plane):
 
 ### Start the first node (control plane) with a unique profile name
+
 ```bash
 minikube start --profile=node1
 ```
@@ -41,7 +42,6 @@ Networking Between Nodes: Minikube nodes are isolated by default. To enable comm
 
 Minikube is excellent for single-node setups, but for multi-node clusters, Kind or K3d are more practical and efficient.
 
-
 # Kind
 
 **Use Kind for Multi-Node Clusters**
@@ -57,11 +57,11 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ```
 
-**Create a Multi-Node Cluster**: 
+**Create a Multi-Node Cluster**:
 
 Create a configuration file (e.g., kind-config.yaml):
-```yaml
 
+```yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -69,31 +69,33 @@ nodes:
   - role: worker
   - role: worker
 ```
+
 Save the above configuration in a file named `kind-cluster-config.yaml`. This configuration defines a cluster with one control plane node and two worker nodes.
 
-
 Then, create the cluster:
+
 ```bash
 # Create the Kind cluster using the configuration file
 kind create cluster --config ./05-kind-multinode/kind-cluster-config.yaml
 ```
 
 Verify the Cluster
+
 ```bash
 # Check the cluster information
 kubectl cluster-info
 # List the nodes in the cluster
 kubectl get nodes
 ```
+
 # Rename Nodes in Kind
+
 To rename a node in Kind, you can use the `kind get nodes` command to list the nodes and then use `kubectl label` to add a label to the node. However, renaming nodes directly is not supported in Kind. Instead, you can create a new cluster with the desired node names.
 
 kubectl label node <node-name> new-name=<desired-name>
 
 kubectl label node gnx-cluster-worker node-role.kubernetes.io/worker=worker
 
-
 kubectl label node gnx-cluster-worker new-name=gnx-cluster-worker1
 
-
- Let me know if you'd like further assistance! 😊
+Let me know if you'd like further assistance! 😊

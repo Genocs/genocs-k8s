@@ -1,7 +1,8 @@
 ## Setup Helm
+
 Helm is a package manager for Kubernetes that helps you manage Kubernetes applications. It allows you to define, install, and upgrade even the most complex Kubernetes applications. Follow these steps to use Helm with your MicroK8s cluster:
 
-``` bash
+```bash
 # Install Helm
 sudo snap install helm --classic
 ```
@@ -12,7 +13,7 @@ Upon installing Helm, a package manager for Kubernetes, you can use it to simpli
 
 Create a new Helm chart from scratch, package it, and deploy it to your cluster
 
-``` bash
+```bash
 # Create a new helm chart
 helm create gnxchart
 
@@ -37,10 +38,12 @@ helm uninstall dev-gnx-1
 ```
 
 ## Setup nginx ingress controller
+
 To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:
 
 1. **Enable the Nginx Ingress Controller**:
    MicroK8s provides an easy way to enable the Nginx Ingress Controller. Run the following command:
+
    ```bash
    # Enable Nginx Ingress Controller
    microk8s enable ingress
@@ -48,9 +51,11 @@ To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these st
 
 2. **Verify the Ingress Controller is running**:
    After enabling the Ingress Controller, you can check its status by running:
+
    ```bash
    microk8s kubectl get pods -n kube-system
    ```
+
    Look for a pod with a name that starts with `nginx-ingress-controller`.
 
 3. **Create an Ingress Resource**:
@@ -70,11 +75,13 @@ To set up the Nginx Ingress Controller in your MicroK8s cluster, follow these st
    ```
 
 In case you want to use the Nginx Ingress Controller with Let's Encrypt for SSL/TLS certificates, you can follow these additional steps:
+
 ```yaml
 TBW
 ```
 
 To install the Nginx with helmchart, you can use the following command:
+
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
@@ -82,17 +89,17 @@ helm install ingress-nginx ingress-nginx/ingress-nginx -namespace ingress-nginx 
 ```
 
 In case you want to run the above commands, all togheter, follow the command below:
+
 ```bash
 # Everything in one command
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 ```
 
-----
+---
+
 # Setup Kubernetes Dashboard
 
-
 To set up the Kubernetes Dashboard in your MicroK8s cluster, follow these steps:
-
 
 ### Setup MicroK8s Dashboard to Start Automatically
 
@@ -105,19 +112,20 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    Description=MicroK8s Dashboard Service
    After=snap.microk8s.daemon-kubelite.service
    Requires=snap.microk8s.daemon-kubelite.service
-   
+
    [Service]
    Type=simple
    User=root
    ExecStart=/snap/bin/microk8s dashboard-proxy
    Restart=always
    RestartSec=10
-   
+
    [Install]
    WantedBy=multi-user.target
    ```
 
 2. Enable and start the service:
+
    ```bash
    sudo systemctl daemon-reload
    sudo systemctl enable microk8s-dashboard.service
@@ -125,6 +133,7 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    ```
 
 3. Verify the service is running:
+
    ```bash
    sudo systemctl status microk8s-dashboard.service
    ```
@@ -134,7 +143,7 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    ```bash
    # Get the WSL2 IP address
    WSL_IP=$(wsl hostname -I)
-   
+
    # Set up port forwarding in Windows PowerShell
    netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.0 connectport=10443 connectaddress=$WSL_IP
    ```
@@ -145,10 +154,10 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    #!/bin/bash
    # Wait for network to be ready
    sleep 10
-   
+
    # Get WSL2 IP
    WSL_IP=$(hostname -I | awk '{print $1}')
-   
+
    # Set up port forwarding
    powershell.exe -Command "netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.0 connectport=10443 connectaddress=$WSL_IP"
    ```
@@ -160,12 +169,14 @@ To set up MicroK8s to automatically start the dashboard when the cluster starts,
    ```
 
 Now the dashboard will:
+
 - Start automatically when MicroK8s starts
 - Restart automatically if it crashes
 - Be accessible at [https://localhost:10443](https://localhost:10443) from your Windows host
 - Persist across WSL2 restarts
 
 To access the dashboard:
+
 1. Open your browser and navigate to [https://localhost:10443](https://localhost:10443)
 2. You'll need to get the token for authentication:
    ```bash
@@ -173,7 +184,9 @@ To access the dashboard:
    ```
 
 ### How to setup pull images from private registry
+
 To set up your MicroK8s cluster to pull images from a private registry, you need to create a Kubernetes secret that contains your registry credentials. Here's how to do it:
+
 ```bash
 # Create a secret for your private registry
 microk8s kubectl create secret docker-registry my-registry-secret \
@@ -183,9 +196,13 @@ microk8s kubectl create secret docker-registry my-registry-secret \
   --docker-email=<your-email> \
   --namespace <your-app-namespace>
 ```
+
 Replace `<your-registry-server>`, `<your-username>`, `<your-password>`, and `<your-email>` with your actual registry details.
+
 # Use the secret in your deployment
+
 When you create or update your deployment, specify the imagePullSecrets field to use the secret you just created. Here's an example of how to do this in a deployment YAML file:
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -193,31 +210,32 @@ metadata:
   name: my-app
   namespace: gnx-apps
 spec:
-   replicas: 1
-   selector:
-      matchLabels:
-         app: my-app
-   template:
-      metadata:
-         labels:
-         app: my-app
-      spec:
-         imagePullSecrets:
-         - name: my-registry-secret
-         containers:
-         - name: my-container
-         image: <your-registry-server>/<your-image>:<tag>
-         ports:
-         - containerPort: 80
-   ```
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+      app: my-app
+    spec:
+      imagePullSecrets:
+        - name: my-registry-secret
+      containers:
+        - name: my-container
+      image: <your-registry-server>/<your-image>:<tag>
+      ports:
+        - containerPort: 80
+```
 
 After applying this deployment, your MicroK8s cluster will use the specified secret to authenticate with your private registry when pulling images.
-
 
 Official documentation for MicroK8s can be found at [MicroK8s Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
 
 # How to setup Let's Encrypt with Nginx Ingress Controller
+
 To set up Let's Encrypt with the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:
+
 1. **Install the Nginx Ingress Controller**:
    If you haven't already installed the Nginx Ingress Controller, you can do so with the following command:
    ```bash
@@ -238,23 +256,23 @@ To set up Let's Encrypt with the Nginx Ingress Controller in your MicroK8s clust
    spec:
      acme:
        server: https://acme-v02.api.letsencrypt.org/directory
-       email:  <
+       email: <
+   ```
 
-
-----
+---
 
 # Application Deployment
 
-``` bash
+```bash
 # Initialize infrastructure services
 bash ./01-cluster-initialize/setup-infrastructure.sh
 ```
 
-
 ### Useful Commands
 
 Following is a list of useful commands:
-``` bash
+
+```bash
 # Create namespace
 microk8s kubectl create namespace gnx-apps
 
@@ -282,27 +300,27 @@ watch microk8s kubectl get all
 microk8s kubectl port-forward -n default service/microbot 80:80 --address 0.0.0.0
 ```
 
-
 This section describe the repository folders along with a brief description of their contents:
 
 ## 01-setup-infrasctructure
+
 This folder contains scripts and configurations to set up the infrastructure for the Genocs Library K8s challenge. It includes:
+
 - setup-infrastructure.sh: A script to initialize the infrastructure services.
 
-
 ## 02-deploy-application
+
 This folder contains the deployment configurations for the Genocs Library application.
 
-
-``` bash
+```bash
 # Initialize infrastructure services
 bash ./01-cluster-initialize/setup-infrastructure.sh
 ```
 
-
 # Miscellaneous
 
 References and resources used in this project:
+
 - [Genocs Library](https://genocs.com/library/)
 
 - [Windows Subsystem for Linux (WSL2)](https://docs.microsoft.com/en-us/windows/wsl/install)

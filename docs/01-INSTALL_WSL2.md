@@ -1,16 +1,20 @@
 # Install WSL2
+
 This file provides a step-by-step guide to install WSL2 on Windows.
 
 ## Prerequisites
+
 - Windows 10 or later
 - Virtualization enabled in BIOS
 
 ## Installation Steps
+
 Follow the instructions from the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install) to install WSL2.
 
 Another option could be to use Microsoft Store to install Ubuntu:
 
 1. **Install Ubuntu from Microsoft Store**:
+
    - Open Microsoft Store and search for "Ubuntu"
 
    ![Open Microsoft Store](../assets/k8s_01.png)
@@ -22,54 +26,68 @@ Another option could be to use Microsoft Store to install Ubuntu:
    - Click on "Get" to install it.
 
 2. **Install WSL2 by command line**:
+
    - Open PowerShell as Administrator and run the following command to set WSL2 as the default version:
+
      ```powershell
      wsl --set-default-version 2
      ```
 
    - Open PowerShell as Administrator and run:
+
      ```powershell
      wsl --install -d Ubuntu
      ```
 
-   - If you want to install a specific version of Ubuntu, you can specify it like this:     
+   - If you want to install a specific version of Ubuntu, you can specify it like this:
+
      ```powershell
      wsl --install -d Ubuntu-24.04
      ```
 
    - If you want to check the WSL version
+
      ```bash
      wsl --list --all --verbose
      ```
+
      You should see something like this:
+
      ```plaintext
        NAME                   STATE           VERSION
      * Ubuntu-24.04           Running         2
      ```
 
    - If you want to check the WSL version of the default distro
+
      ```bash
      wsl --status
      ```
+
      You should see something like this:
+
      ```plaintext
      Default Distribution: Ubuntu-22.04
      Default Version: 2
      ```
-     
+
      If you want to setup the default distro to Ubuntu-24.04
+
      ```bash
      wsl --set-default Ubuntu-24.04
      ```
 
-
 ### Set Up Ubuntu and enable systemd
+
 After the installation is complete, you will need to set up Ubuntu. Open the Ubuntu app from the Start menu or type `wsl` in PowerShell to launch it.
+
 ```bash
 # Get the Ubuntu version
 lsb_release -a
 ```
+
 You should see something like this:
+
 ```plaintext
 No LSB modules are available.
 Distributor ID: Ubuntu
@@ -83,9 +101,11 @@ After installing, complete the initial Ubuntu setup by creating a username and p
 Now, follow these steps:
 
 Enable systemd in WSL2.
+
 ```bash
 sudo nano /etc/wsl.conf
 ```
+
 This will open the `wsl.conf` file in the nano text editor. If the file does not exist, it will create a new one.
 If you see a blank file, you can proceed to add the necessary configuration. If there are existing lines, make sure to add the new lines without removing any existing configurations.
 Add the following lines in it and save.
@@ -113,7 +133,8 @@ wsl
   ```
 
 ## Enable IP Forwarding
-``` bash
+
+```bash
 # Install net-tools
 sudo apt install net-tools
 

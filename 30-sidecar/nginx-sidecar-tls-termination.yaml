@@ -32,7 +32,7 @@ spec:
         app: web-app
     spec:
       containers:
-        - name: web-application 
+        - name: web-application
           image: your-app-image:latest # Replace with your application container
           ports:
             - containerPort: 8080 # For HTTP
@@ -52,7 +52,7 @@ spec:
             name: nginx-config
         - name: ssl-certs-volume
           secret:
-            secretName: app-ssl-certs-secret # Contains your TLS certificate and key      
+            secretName: app-ssl-certs-secret # Contains your TLS certificate and key
 
 ---
 # nginx sidecar configmap

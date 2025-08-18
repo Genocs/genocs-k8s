@@ -11,17 +11,17 @@ Here's a breakdown of their pros and cons:
 
 Pros:
 
-*Lightweight and Fast*: Kind runs Kubernetes clusters inside Docker containers. This makes it very lightweight and allows for extremely fast cluster creation and deletion (often in less than a minute). This is ideal for rapid iteration and testing.
+_Lightweight and Fast_: Kind runs Kubernetes clusters inside Docker containers. This makes it very lightweight and allows for extremely fast cluster creation and deletion (often in less than a minute). This is ideal for rapid iteration and testing.
 
-*Multi-Node Cluster Support*: Kind supports creating multi-node Kubernetes clusters, including those with multiple control plane nodes for high availability (HA). This is excellent for testing features that require multiple nodes, like pod anti-affinity or complex network policies, and for simulating more realistic production environments.
+_Multi-Node Cluster Support_: Kind supports creating multi-node Kubernetes clusters, including those with multiple control plane nodes for high availability (HA). This is excellent for testing features that require multiple nodes, like pod anti-affinity or complex network policies, and for simulating more realistic production environments.
 CI/CD Integration: Kind was originally designed for testing Kubernetes itself, making it highly suitable for CI/CD pipelines. Its speed and containerized nature allow for quick spin-up and tear-down of ephemeral clusters for automated testing.
 
-*Build Kubernetes from Source*: Kind supports building Kubernetes release builds directly from source, which is beneficial for developers contributing to Kubernetes or needing specific custom versions.
+_Build Kubernetes from Source_: Kind supports building Kubernetes release builds directly from source, which is beneficial for developers contributing to Kubernetes or needing specific custom versions.
 Resource Efficiency: Generally, Kind uses fewer resources than Minikube, especially when using VM-based drivers in Minikube, making it a good choice for machines with limited RAM or CPU.
 Image Loading: You can easily load local container images directly into a Kind cluster, saving time and effort by avoiding the need to set up a registry and push images repeatedly.
 Cons:
 
-*Less "Production-like" Environment*: While it supports multi-node, Kind runs Kubernetes within Docker containers, meaning it shares the host's kernel. This can lead to subtle differences compared to a true VM-based or bare-metal Kubernetes environment, potentially complicating OS-specific testing.
+_Less "Production-like" Environment_: While it supports multi-node, Kind runs Kubernetes within Docker containers, meaning it shares the host's kernel. This can lead to subtle differences compared to a true VM-based or bare-metal Kubernetes environment, potentially complicating OS-specific testing.
 Fewer Built-in Add-ons: Kind is more barebones by default. While highly customizable via configuration files, it doesn't come with as many pre-configured add-ons (like a dashboard or ingress controller) as Minikube, requiring manual installation and configuration for these components.
 Potential for Docker-related Issues: As it relies heavily on Docker, any issues with your Docker installation or configuration (e.g., permissions, resource limits, inotify limits) can directly impact Kind.
 Less User-Friendly for Beginners: While straightforward for those familiar with Docker and Kubernetes, new users might find Minikube's out-of-the-box experience a bit simpler for initial exploration due to its bundled features.
@@ -46,6 +46,7 @@ Hypervisor Requirements: If you choose a VM driver, you'll need to have a compat
 Less Ideal for CI/CD: While possible, its higher resource usage and slower startup times make it less optimal for rapid, ephemeral clusters in CI/CD pipelines compared to Kind.
 
 ## When to Choose Which:
+
 1. Choose Kind if:
 
    - You prioritize speed and resource efficiency.
@@ -54,7 +55,6 @@ Less Ideal for CI/CD: While possible, its higher resource usage and slower start
    - You are comfortable with Docker and potentially configuring Kubernetes components manually.
    - You are developing or testing Kubernetes itself.
    - You have a low-spec PC but still need multi-node capabilities.
-
 
 2. Choose Minikube if:
 

@@ -6,9 +6,10 @@ This guide will help you set up Kubernetes cluster on your local machine using M
 
 ## Prerequisites
 
-
 ## Install Docker, Minikube, and Kubectl
+
 Update the package database and install prerequisites
+
 ```bash
 # Update the package database and install prerequisites
 sudo apt update && sudo apt upgrade -y
@@ -21,6 +22,7 @@ sudo apt install -y \
 ```
 
 Install Docker
+
 ```bash
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
@@ -35,9 +37,10 @@ sudo add-apt-repository \
 ```
 
 Update the package database with the Docker packages from the newly added repo
+
 ```bash
 sudo apt-get update -y
-sudo apt-get install -y docker-ce 
+sudo apt-get install -y docker-ce
 sudo usermod -aG docker $USER && newgrp docker
 ```
 
@@ -78,7 +81,9 @@ kubectl version --client
 ```
 
 ## Start Minikube
+
 Open your terminal run the following command to start:
+
 ```bash
 # Option 1: Start Single node Minikube cluster with the Docker driver
 minikube start --driver=docker
@@ -86,15 +91,18 @@ minikube start --driver=docker
 
 It will take a couple of minutes depending on your internet connection.
 
->If it shows you an error, it could be possible to your WSL2 is out of date as systemd was introduced in Sept-2022.
+> If it shows you an error, it could be possible to your WSL2 is out of date as systemd was introduced in Sept-2022.
 >
->To fix that
->In powershell type wsl.exe — update and try running minikube start after restarting wsl
+> To fix that
+> In powershell type wsl.exe — update and try running minikube start after restarting wsl
 > Once your minikube starts working, type:
+
 ```bash
 minikube status
 ```
->You should see something like this:
+
+> You should see something like this:
+
 ```plaintext
 host: Running
 kubelet: Running
@@ -103,6 +111,7 @@ kubeconfig: Configured
 ```
 
 ## Configure Kubectl to Use Minikube
+
 To configure `kubectl` to use Minikube, run the following command:
 
 ```bash
@@ -110,6 +119,7 @@ minikube update-context
 ```
 
 This command will set the current context to Minikube in your `kubectl` configuration.
+
 ```bash
 kubectl config use-context minikube
 
@@ -119,7 +129,9 @@ minikube start
 # Check the status of Minikube (get running pods all namespaces)
 kubectl get pods -A
 ```
+
 You'll see something.
+
 ```plaintext
 NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE
 kube-system   coredns-78fcd69978-5j4q7           1/1     Running   0          2m
@@ -136,9 +148,11 @@ You have successfully installed and configured Kubernetes on the local system.
 ## Setup and Accessing the Kubernetes Dashboard
 
 To set up and access the Kubernetes dashboard, follow these steps:
+
 ```bash
 minikube addons enable dashboard
 ```
+
 This command will enable the dashboard addon in Minikube, and it will start automatically when you run `minikube start`.
 This command will ensure that the dashboard is enabled every time you start Minikube.
 
@@ -147,29 +161,37 @@ To access the Kubernetes dashboard, you can run the following command:
 ```bash
 minikube dashboard
 ```
+
 This command will open the Kubernetes dashboard in your default web browser.
 
-
 ## Stopping and Restarting Minikube
+
 To stop Minikube, you can run:
+
 ```bash
 minikube stop
 ```
 
 To restart Minikube, you can run:
+
 ```bash
 minikube start
 ```
 
 ## Deleting Minikube
+
 To delete your Minikube cluster, you can run:
+
 ```bash
 minikube delete
 ```
+
 This command will remove the Minikube cluster and all associated resources.
 
 ## Updating Minikube
+
 To update Minikube to the latest version, you can run:
+
 ```bash
 minikube update-check
 minikube update
@@ -178,6 +200,7 @@ minikube update
 This command will check for updates and apply them if available.
 
 ## Uninstalling Minikube
+
 To uninstall Minikube, you can run the following command:
 
 ```bash
@@ -187,6 +210,7 @@ sudo rm -rf /usr/local/bin/minikube
 This command will remove the Minikube binary from your system.
 
 ## Uninstalling Docker
+
 To uninstall Docker, you can run the following commands:
 
 ```bash
@@ -212,27 +236,29 @@ To have Minikube start automatically as a service when your WSL2 Ubuntu instance
    Description=Minikube Kubernetes Cluster
    After=docker.service
    Requires=docker.service
-   
+
    [Service]
    Type=simple
    User=<your-username>
    ExecStart=/usr/local/bin/minikube start --driver=docker
    ExecStop=/usr/local/bin/minikube stop
    Restart=on-failure
-   
+
    [Install]
    WantedBy=default.target
    ```
+
    Replace `<your-username>` with your actual Ubuntu username.
 
 3. Reload systemd and enable the service:
-   
+
    ```bash
    sudo systemctl daemon-reload
    sudo systemctl enable minikube.service
    ```
 
 4. Start the Minikube service:
+
    ```bash
    sudo systemctl start minikube.service
    ```
