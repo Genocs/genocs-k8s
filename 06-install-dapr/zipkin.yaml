@@ -2,7 +2,6 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: zipkin
-  namespace: myapp
 spec:
   type: exporters.zipkin
   version: v1
