@@ -2,11 +2,12 @@ apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
   name: tracing
-  namespace: myapp
+  namespace: default
 spec:
   tracing:
-    samplingRate: "100"
-    otel:
+    samplingRate: "1"
+    zipkin:
       endpointAddress: "http://zipkin.default.svc.cluster.local:9411/api/v2/spans"
-      isSecure: false
-      protocol: "http"
+  features:
+    - name: Tracing.Enabled
+      enabled: true
