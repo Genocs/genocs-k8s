@@ -14,10 +14,10 @@ spec:
     metadata:
       labels:
         app: sample-app
-      annotations:
-        dapr.io/enabled: "true"
-        dapr.io/app-id: "sample-app"
-        dapr.io/app-port: "3000"
+#     annotations:
+#       dapr.io/enabled: "true"
+#       dapr.io/app-id: "sample-app"
+#       dapr.io/app-port: "3000"
     spec:
       containers:
         - name: sample-app
