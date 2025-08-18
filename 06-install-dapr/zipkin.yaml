@@ -9,5 +9,5 @@ spec:
   metadata:
     - name: enabled
       value: "true"
-    - name: esporterAddress
+    - name: exporterAddress
       value: "http://zipkin.default.svc.cluster.local:9411/api/v2/spans"

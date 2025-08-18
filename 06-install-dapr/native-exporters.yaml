@@ -2,6 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: native-exporters
+  namespace: myapp
 spec:
   type: exporters.native
   version: v1
