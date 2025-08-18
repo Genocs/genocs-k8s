@@ -18,7 +18,6 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "sample-app"
         dapr.io/app-port: "3000"
-        dapr.io/config: "tracing" # Add this line to enable tracing
     spec:
       containers:
         - name: sample-app
