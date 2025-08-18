@@ -236,6 +236,9 @@ To access the Dapr dashboard:
 ```bash
 # Port forward the Dapr dashboard
 kubectl port-forward -n dapr-system svc/dapr-dashboard 8080:8080
+
+# Foward port for sample app
+kubectl port-forward svc/sample-app-service 5080:80 -n myapp
 ```
 
 Then open your browser and navigate to `http://localhost:8080`
