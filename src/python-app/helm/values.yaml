@@ -2,8 +2,8 @@
 replicaCount: 3
 
 image:
-  repository: python-web-app
-  tag: "latest"
+  repository: genocs/python-web-app
+  tag: "1.0.0"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

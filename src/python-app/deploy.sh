@@ -10,8 +10,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-IMAGE_NAME="python-web-app"
-IMAGE_TAG="latest"
+IMAGE_NAME="genocs/python-web-app"
+IMAGE_TAG="1.0.0"
 NAMESPACE="default"
 
 echo -e "${GREEN}🚀 Starting Python Web App Deployment${NC}"
@@ -35,7 +35,7 @@ if ! kubectl cluster-info &> /dev/null; then
 fi
 
 echo -e "${YELLOW}📦 Building Docker image...${NC}"
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
 
 echo -e "${YELLOW}🔍 Checking if namespace exists...${NC}"
 if ! kubectl get namespace ${NAMESPACE} &> /dev/null; then

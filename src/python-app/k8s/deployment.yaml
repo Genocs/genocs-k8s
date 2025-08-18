@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: python-web-app
-          image: python-web-app:latest
+          image: genocs/python-web-app:1.0.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
