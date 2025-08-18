@@ -1,0 +1,12 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: native-exporters
+spec:
+  type: exporters.native
+  version: v1
+  metadata:
+    - name: enable
+      value: "true"
+    - name: agentEndpoint
+      value: "<your-native-exporter-endpoint>:6789"
