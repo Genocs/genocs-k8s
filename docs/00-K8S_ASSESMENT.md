@@ -9,6 +9,10 @@ Here's a breakdown of their pros and cons:
 
 **Kind (Kubernetes IN Docker)**
 
+![kind logo](../assets/kind.png)
+
+- [kind](https://kind.sigs.k8s.io/) is a tool for running local Kubernetes clusters using Docker container "nodes". It is primarily designed for testing Kubernetes itself, but it can also be used to run local clusters for development and testing purposes.
+
 Pros:
 
 _Lightweight and Fast_: Kind runs Kubernetes clusters inside Docker containers. This makes it very lightweight and allows for extremely fast cluster creation and deletion (often in less than a minute). This is ideal for rapid iteration and testing.
@@ -27,6 +31,10 @@ Potential for Docker-related Issues: As it relies heavily on Docker, any issues 
 Less User-Friendly for Beginners: While straightforward for those familiar with Docker and Kubernetes, new users might find Minikube's out-of-the-box experience a bit simpler for initial exploration due to its bundled features.
 
 **Minikube**
+
+![minikube](../assets/minikube.svg)
+
+- [minikube](https://minikube.sigs.k8s.io/docs/) is a tool that makes it easy to run Kubernetes locally. It creates a virtual machine on your local machine and runs a single-node Kubernetes cluster inside it. Minikube is ideal for development and testing purposes, allowing you to experiment with Kubernetes without needing a full cluster setup.
 
 Pros:
 

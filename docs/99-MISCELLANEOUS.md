@@ -1,18 +1,8 @@
 # Miscellaneous
 
-## kind
-
-![kind logo](../assets/kind.png)
-
-- [kind](https://kind.sigs.k8s.io/) is a tool for running local Kubernetes clusters using Docker container "nodes". It is primarily designed for testing Kubernetes itself, but it can also be used to run local clusters for development and testing purposes.
 
 - [Kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/) is a tool provided by Kubernetes to help you bootstrap a Kubernetes cluster. It simplifies the process of setting up a cluster by automating tasks such as generating certificates, creating configuration files, and starting the control plane components.
 
-## minikube
-
-![minikube](../assets/minikube.svg)
-
-- [minikube](https://minikube.sigs.k8s.io/docs/) is a tool that makes it easy to run Kubernetes locally. It creates a virtual machine on your local machine and runs a single-node Kubernetes cluster inside it. Minikube is ideal for development and testing purposes, allowing you to experiment with Kubernetes without needing a full cluster setup.
 
 ## MicroK8s
 
@@ -36,6 +26,54 @@ kind create cluster --config 05-kind-multinode/kind-cluster-config.yaml
 
 This command will create a Kubernetes cluster using the configuration specified in the `kind-cluster-config.yaml` file. The configuration file allows you to customize the cluster settings, such as the number of nodes, their roles, and other parameters.
 
+
+
+
+# How to setup pull images from private registry
+
+To set up your MicroK8s cluster to pull images from a private registry, you need to create a Kubernetes secret that contains your registry credentials. Here's how to do it:
+
 ```bash
-dapr init --kubernetes
+# Create a secret for your private registry
+microk8s kubectl create secret docker-registry my-registry-secret \
+  --docker-server=<your-registry-server> \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<your-email> \
+  --namespace <your-app-namespace>
 ```
+
+Replace `<your-registry-server>`, `<your-username>`, `<your-password>`, and `<your-email>` with your actual registry details.
+
+# Use the secret in your deployment
+
+When you create or update your deployment, specify the imagePullSecrets field to use the secret you just created. Here's an example of how to do this in a deployment YAML file:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: gnx-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+      app: my-app
+    spec:
+      imagePullSecrets:
+        - name: my-registry-secret
+      containers:
+        - name: my-container
+      image: <your-registry-server>/<your-image>:<tag>
+      ports:
+        - containerPort: 80
+```
+
+After applying this deployment, your MicroK8s cluster will use the specified secret to authenticate with your private registry when pulling images.
+
+Official documentation for MicroK8s can be found at [MicroK8s Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
