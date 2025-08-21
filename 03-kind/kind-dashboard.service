@@ -1,0 +1,16 @@
+[Unit]
+Description=Kind Kubernetes Dashboard Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=$HOME
+ExecStart=$HOME/kind-dashboard.sh
+Restart=always
+RestartSec=10
+Environment=KUBECONFIG=$HOME/.kube/config
+
+[Install]
+WantedBy=multi-user.target
