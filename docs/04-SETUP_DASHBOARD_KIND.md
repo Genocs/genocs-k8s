@@ -129,7 +129,30 @@ chmod +x ~/kind-dashboard.sh
 
 If you want the dashboard to start automatically, create a systemd service:
 
+### Option 1: Use the provided script (Recommended)
+
 ```bash
+# Make the script executable
+chmod +x 03-kind/create-kind-dashboard-service.sh
+
+# Run the script to create the service file
+./03-kind/create-kind-dashboard-service.sh
+
+# Enable and start the service
+sudo systemctl daemon-reload
+sudo systemctl enable kind-dashboard.service
+sudo systemctl start kind-dashboard.service
+```
+
+### Option 2: Manual creation
+
+If you prefer to create the service manually, replace `$USER` and `$HOME` with actual values:
+
+```bash
+# Get your username and home directory
+CURRENT_USER=$(whoami)
+USER_HOME=$(eval echo ~$CURRENT_USER)
+
 # Create the service file
 sudo tee /etc/systemd/system/kind-dashboard.service > /dev/null <<EOF
 [Unit]
@@ -139,12 +162,12 @@ Wants=network.target
 
 [Service]
 Type=simple
-User=$USER
-WorkingDirectory=$HOME
-ExecStart=$HOME/kind-dashboard.sh
+User=$CURRENT_USER
+WorkingDirectory=$USER_HOME
+ExecStart=$USER_HOME/kind-dashboard.sh
 Restart=always
 RestartSec=10
-Environment=KUBECONFIG=$HOME/.kube/config
+Environment=KUBECONFIG=$USER_HOME/.kube/config
 
 [Install]
 WantedBy=multi-user.target
@@ -247,6 +270,27 @@ kind get nodes
 # Restart Kind cluster if needed
 kind delete cluster
 kind create cluster
+```
+
+### Systemd Service Issues
+
+If you encounter issues with the systemd service:
+
+```bash
+# Check service status
+sudo systemctl status kind-dashboard.service
+
+# Check service logs
+sudo journalctl -u kind-dashboard.service -f
+
+# Verify the service file syntax
+sudo systemd-analyze verify /etc/systemd/system/kind-dashboard.service
+
+# Check if the script exists and is executable
+ls -la ~/kind-dashboard.sh
+
+# Recreate the service file using the script
+./03-kind/create-kind-dashboard-service.sh
 ```
 
 ## Cleanup

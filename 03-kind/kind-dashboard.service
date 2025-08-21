@@ -5,12 +5,12 @@ Wants=network.target
 
 [Service]
 Type=simple
-User=$USER
-WorkingDirectory=$HOME
-ExecStart=$HOME/kind-dashboard.sh
+User=root
+WorkingDirectory=/root
+ExecStart=/root/kind-dashboard.sh
 Restart=always
 RestartSec=10
-Environment=KUBECONFIG=$HOME/.kube/config
+Environment=KUBECONFIG=/root/.kube/config
 
 [Install]
 WantedBy=multi-user.target
