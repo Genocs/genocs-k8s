@@ -29,11 +29,12 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if running as root
+# Check if running as root (optional - KIND can run as root)
 check_root() {
     if [[ $EUID -eq 0 ]]; then
-        error "This script should not be run as root for KIND setup"
-        exit 1
+        warn "Running as root - this is acceptable for KIND setup"
+    else
+        log "Running as non-root user - will use sudo for privileged operations"
     fi
 }
 
@@ -41,24 +42,35 @@ check_root() {
 install_dependencies() {
     log "Installing dependencies..."
     
+    # Determine if we need sudo
+    if [[ $EUID -eq 0 ]]; then
+        SUDO=""
+        USER_HOME="/root"
+    else
+        SUDO="sudo"
+        USER_HOME="/home/$USER"
+    fi
+    
     # Update package list
-    sudo apt update
+    $SUDO apt update
     
     # Install Docker if not present
     if ! command -v docker &> /dev/null; then
         log "Installing Docker..."
-        sudo apt install -y docker.io
-        sudo systemctl enable docker
-        sudo systemctl start docker
-        sudo usermod -aG docker $USER
-        log "Docker installed. Please logout and login again to apply group changes."
+        $SUDO apt install -y docker.io
+        $SUDO systemctl enable docker
+        $SUDO systemctl start docker
+        if [[ $EUID -ne 0 ]]; then
+            $SUDO usermod -aG docker $USER
+            log "Docker installed. Please logout and login again to apply group changes."
+        fi
     fi
     
     # Install kubectl if not present
     if ! command -v kubectl &> /dev/null; then
         log "Installing kubectl..."
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        $SUDO install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
         rm kubectl
     fi
     
@@ -67,7 +79,7 @@ install_dependencies() {
         log "Installing KIND..."
         curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
         chmod +x ./kind
-        sudo mv ./kind /usr/local/bin/kind
+        $SUDO mv ./kind /usr/local/bin/kind
     fi
 }
 
@@ -183,8 +195,19 @@ EOF
 create_systemd_service() {
     log "Creating systemd service for auto-start..."
     
+    # Determine user and home directory
+    if [[ $EUID -eq 0 ]]; then
+        SERVICE_USER="root"
+        SERVICE_HOME="/root"
+        SERVICE_GROUP="root"
+    else
+        SERVICE_USER="$USER"
+        SERVICE_HOME="/home/$USER"
+        SERVICE_GROUP="docker"
+    fi
+    
     # Create the service file
-    sudo tee $SERVICE_FILE > /dev/null <<EOF
+    $SUDO tee $SERVICE_FILE > /dev/null <<EOF
 [Unit]
 Description=Kubernetes Dashboard Auto-Start
 After=docker.service
@@ -194,10 +217,10 @@ StartLimitIntervalSec=0
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-User=$USER
-Group=docker
-Environment=HOME=/home/$USER
-WorkingDirectory=/home/$USER
+User=$SERVICE_USER
+Group=$SERVICE_GROUP
+Environment=HOME=$SERVICE_HOME
+WorkingDirectory=$SERVICE_HOME
 ExecStart=/usr/local/bin/start-k8s-dashboard.sh
 ExecStop=/usr/local/bin/stop-k8s-dashboard.sh
 TimeoutStartSec=600
@@ -209,12 +232,12 @@ WantedBy=multi-user.target
 EOF
     
     # Create start script
-    sudo tee /usr/local/bin/start-k8s-dashboard.sh > /dev/null <<'EOF'
+    $SUDO tee /usr/local/bin/start-k8s-dashboard.sh > /dev/null <<'EOF'
 #!/bin/bash
 set -e
 
 CLUSTER_NAME="dashboard-cluster"
-USER_HOME="/home/$SUDO_USER"
+USER_HOME="$SERVICE_HOME"
 
 # Wait for Docker to be ready
 while ! docker info >/dev/null 2>&1; do
@@ -248,7 +271,7 @@ echo "Use token from /tmp/dashboard-token.txt to login"
 EOF
     
     # Create stop script
-    sudo tee /usr/local/bin/stop-k8s-dashboard.sh > /dev/null <<'EOF'
+    $SUDO tee /usr/local/bin/stop-k8s-dashboard.sh > /dev/null <<'EOF'
 #!/bin/bash
 
 # Kill port forwarding
@@ -282,12 +305,12 @@ fi
 EOF
     
     # Make scripts executable
-    sudo chmod +x /usr/local/bin/start-k8s-dashboard.sh
-    sudo chmod +x /usr/local/bin/stop-k8s-dashboard.sh
+    $SUDO chmod +x /usr/local/bin/start-k8s-dashboard.sh
+    $SUDO chmod +x /usr/local/bin/stop-k8s-dashboard.sh
     
     # Enable and start service
-    sudo systemctl daemon-reload
-    sudo systemctl enable $SERVICE_NAME
+    $SUDO systemctl daemon-reload
+    $SUDO systemctl enable $SERVICE_NAME
     
     log "Systemd service created and enabled"
 }
@@ -312,9 +335,9 @@ main() {
     log "Access from WSL2: https://localhost:8443"
     log ""
     log "Manual controls:"
-    log "  Start:  sudo systemctl start $SERVICE_NAME"
-    log "  Stop:   sudo systemctl stop $SERVICE_NAME"
-    log "  Status: sudo systemctl status $SERVICE_NAME"
+    log "  Start:  $SUDO systemctl start $SERVICE_NAME"
+    log "  Stop:   $SUDO systemctl stop $SERVICE_NAME"
+    log "  Status: $SUDO systemctl status $SERVICE_NAME"
     log ""
     log "Token file: /tmp/dashboard-token.txt"
     log ""
@@ -325,7 +348,7 @@ main() {
     log "  powershell.exe 'netsh interface portproxy add v4tov4 listenport=8443 listenaddress=0.0.0.0 connectport=8443 connectaddress=\$(wsl hostname -I).Trim()'"
     log ""
     log "To access the dashboard now, run:"
-    log "  sudo systemctl start $SERVICE_NAME"
+    log "  $SUDO systemctl start $SERVICE_NAME"
 }
 
 # Run main function
