@@ -257,6 +257,26 @@ if [ -f /tmp/dashboard-port-forward.pid ]; then
     rm -f /tmp/dashboard-port-forward.pid
 fi
 
+# Remove Windows port forwarding if in WSL2
+if [[ -n "${WSL_DISTRO_NAME}" ]]; then
+    echo "Removing Windows port forwarding..."
+    cat > /tmp/cleanup-port-forward.ps1 <<'PSEOF'
+try {
+    netsh interface portproxy delete v4tov4 listenport=8443 listenaddress=0.0.0.0
+    Write-Host "Port forwarding removed"
+} catch {
+    Write-Host "No port forwarding to remove"
+}
+
+try {
+    Remove-NetFirewallRule -DisplayName "WSL2 K8s Dashboard" -ErrorAction SilentlyContinue
+    Write-Host "Firewall rule removed"
+} catch {}
+PSEOF
+    
+    powershell.exe -ExecutionPolicy Bypass -File /tmp/cleanup-port-forward.ps1 2>/dev/null || true
+fi
+
 # Optionally delete the cluster (uncomment if you want to clean up completely)
 # kind delete cluster --name dashboard-cluster
 EOF
@@ -286,14 +306,23 @@ main() {
     
     log "Setup completed successfully!"
     log ""
+    log "=== WSL2 Configuration ==="
     log "Dashboard will automatically start on VM boot"
+    log "Access from Windows: https://localhost:8443"
+    log "Access from WSL2: https://localhost:8443"
+    log ""
     log "Manual controls:"
     log "  Start:  sudo systemctl start $SERVICE_NAME"
     log "  Stop:   sudo systemctl stop $SERVICE_NAME"
     log "  Status: sudo systemctl status $SERVICE_NAME"
     log ""
-    log "Dashboard URL: https://localhost:8443"
     log "Token file: /tmp/dashboard-token.txt"
+    log ""
+    log "=== WSL2 Specific Notes ==="
+    log "• Port forwarding to Windows is automatic"
+    log "• Windows Firewall rule added for port 8443"
+    log "• If port forwarding fails, run manually:"
+    log "  powershell.exe 'netsh interface portproxy add v4tov4 listenport=8443 listenaddress=0.0.0.0 connectport=8443 connectaddress=\$(wsl hostname -I).Trim()'"
     log ""
     log "To access the dashboard now, run:"
     log "  sudo systemctl start $SERVICE_NAME"
