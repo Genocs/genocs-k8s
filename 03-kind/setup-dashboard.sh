@@ -101,7 +101,7 @@ nodes:
         node-labels: "ingress-ready=true"
   extraPortMappings:
   - containerPort: 80
-    hostPort: 80
+    hostPort: 8080
     protocol: TCP
   - containerPort: 443
     hostPort: 443
@@ -109,6 +109,9 @@ nodes:
   - containerPort: 8443
     hostPort: 8443
     protocol: TCP
+- role: worker
+- role: worker
+- role: worker
 EOF
 }
 
