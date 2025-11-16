@@ -81,7 +81,21 @@ kubectl create secret docker-registry private-registry-secret \
   --docker-password=<your-password> \
   --docker-email=<your-email> \
   --namespace=<your-namespace>
+
+# Create a secret for Docker Hub
+kubectl create secret docker-registry dockerhub-secret \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=<your-dockerhub-username> \
+  --docker-password=<your-dockerhub-password> \
+  --docker-email=<your-email> \
+  --namespace=<your-namespace>
+
+# Verify the secret was created
+kubectl get secret dockerhub-secret --namespace=<your-namespace> -o yaml
 ```
+
+Replace `<your-registry-server>`, `<your-username>`, `<your-password>`, and `<your-email>` with your actual registry details.
+
 
 ## Step 2: Configure Deployment to Use Secret
 
@@ -371,3 +385,43 @@ After setting up private registry access, consider:
 4. **Implementing backup**: Backup registry images and configurations
 
 This setup provides secure and reliable access to private container registries in your Kubernetes cluster.
+
+
+
+# How to setup pull images from private registry
+
+To set up your MicroK8s cluster to pull images from a private registry, you need to create a Kubernetes secret that contains your registry credentials. Here's how to do it:
+
+
+# Use the secret in your deployment
+
+When you create or update your deployment, specify the imagePullSecrets field to use the secret you just created. Here's an example of how to do this in a deployment YAML file:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  namespace: gnx-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+      app: my-app
+    spec:
+      imagePullSecrets:
+        - name: my-registry-secret
+      containers:
+        - name: my-container
+      image: <your-registry-server>/<your-image>:<tag>
+      ports:
+        - containerPort: 80
+```
+
+After applying this deployment, your MicroK8s cluster will use the specified secret to authenticate with your private registry when pulling images.
+
+Official documentation for MicroK8s can be found at [MicroK8s Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)

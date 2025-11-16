@@ -135,9 +135,18 @@ EOF
 # Create the multi-node cluster
 kind create cluster --name multi-node-cluster --config kind-config.yaml
 
+# Example command to create a cluster with a specific config file
+kind create cluster --config 03-kind/kind-cluster-config.yaml
+
 # Verify nodes
 kubectl get nodes
 ```
+
+```bash
+```
+
+This command will create a Kubernetes cluster using the configuration specified in the `kind-cluster-config.yaml` file. The configuration file allows you to customize the cluster settings, such as the number of nodes, their roles, and other parameters.
+
 
 ## Step 5: Configure Cluster Access
 
