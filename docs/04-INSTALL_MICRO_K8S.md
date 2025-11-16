@@ -1,5 +1,9 @@
 # Kubernetes Cluster Setup with MicroK8s on Ubuntu
 
+This guide provides step-by-step instructions to install and configure a Kubernetes cluster using MicroK8s on an Ubuntu WSL2 virtual machine.
+
+![MicroK8s logo](../assets/MicroK8s.png)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following prerequisites:

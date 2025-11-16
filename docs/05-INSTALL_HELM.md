@@ -95,8 +95,6 @@ In case you want to run the above commands, all togheter, follow the command bel
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 ```
 
-
-
 # How to setup Let's Encrypt with Nginx Ingress Controller
 
 To set up Let's Encrypt with the Nginx Ingress Controller in your MicroK8s cluster, follow these steps:

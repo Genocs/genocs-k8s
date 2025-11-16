@@ -15,12 +15,14 @@ There are two primary methods to install WSL2:
 ### Method 1: Install Ubuntu from Microsoft Store
 
 1. **Open Microsoft Store**:
+
    - Launch Microsoft Store from the Start menu
    - Search for "Ubuntu"
 
    ![Open Microsoft Store](../assets/k8s_01.png)
 
 2. **Select Ubuntu Distribution**:
+
    - Choose your preferred Ubuntu version (e.g., Ubuntu 24.04 LTS)
    - Click "Get" to download and install
 
@@ -40,32 +42,38 @@ There are two primary methods to install WSL2:
    ```
 
 2. **Install Ubuntu**:
+
    ```powershell
    wsl --install -d Ubuntu
    ```
 
 3. **Install Specific Ubuntu Version** (Optional):
+
    ```powershell
    wsl --install -d Ubuntu-24.04
    ```
 
 4. **Verify Installation**:
+
    ```bash
    wsl --list --all --verbose
    ```
 
    Expected output:
+
    ```plaintext
      NAME                   STATE           VERSION
    * Ubuntu-24.04           Running         2
    ```
 
 5. **Check Default Distribution**:
+
    ```bash
    wsl --status
    ```
 
    Expected output:
+
    ```plaintext
    Default Distribution: Ubuntu-24.04
    Default Version: 2
@@ -81,15 +89,18 @@ There are two primary methods to install WSL2:
 After installation, configure Ubuntu and enable systemd support:
 
 1. **Launch Ubuntu**:
+
    - Open Ubuntu from the Start menu, or
    - Type `wsl` in PowerShell or Command Prompt
 
 2. **Verify Ubuntu Version**:
+
    ```bash
    lsb_release -a
    ```
 
    Expected output:
+
    ```plaintext
    No LSB modules are available.
    Distributor ID: Ubuntu
@@ -99,6 +110,7 @@ After installation, configure Ubuntu and enable systemd support:
    ```
 
 3. **Complete Initial Setup**:
+
    - Create a username and password when prompted
    - Update the system packages:
      ```bash
@@ -106,11 +118,13 @@ After installation, configure Ubuntu and enable systemd support:
      ```
 
 4. **Enable systemd Support**:
+
    ```bash
    sudo nano /etc/wsl.conf
    ```
 
    Add the following configuration to the file:
+
    ```ini
    [boot]
    systemd=true
@@ -191,11 +205,13 @@ systemctl --version
 ### Common Issues:
 
 1. **WSL2 not available**:
+
    - Ensure Windows 10 version 2004 or later
    - Enable virtualization in BIOS/UEFI
    - Enable Windows Subsystem for Linux feature
 
 2. **systemd not working**:
+
    - Verify `/etc/wsl.conf` configuration
    - Restart WSL2 completely
    - Check Windows updates

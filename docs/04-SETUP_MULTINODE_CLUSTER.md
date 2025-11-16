@@ -48,20 +48,20 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: multinode-cluster
 nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 6443
-    hostPort: 6443
-    protocol: TCP
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
-- role: worker
-- role: worker
-- role: worker
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 6443
+        hostPort: 6443
+        protocol: TCP
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+  - role: worker
+  - role: worker
+  - role: worker
 ```
 
 2. **Create the cluster**:
@@ -298,6 +298,7 @@ localhostForwarding=true
 ### Common Issues
 
 #### Cluster Creation Fails
+
 ```bash
 # Check Docker status
 docker info
@@ -311,6 +312,7 @@ docker system prune -a
 ```
 
 #### Node Communication Issues
+
 ```bash
 # Check node status
 kubectl get nodes
@@ -322,6 +324,7 @@ kubectl logs -n kube-system kube-flannel-ds-*
 ```
 
 #### Port Forwarding Issues
+
 ```bash
 # Check port forwarding status
 powershell.exe -Command "netsh interface portproxy show all"
@@ -333,6 +336,7 @@ powershell.exe -Command "netsh interface portproxy delete v4tov4 listenport=80"
 ### Node Management
 
 #### Labeling Nodes
+
 ```bash
 # Add custom labels to nodes
 kubectl label node multinode-cluster-worker environment=development
@@ -343,6 +347,7 @@ kubectl get nodes --show-labels
 ```
 
 #### Node Taints and Tolerations
+
 ```bash
 # Add taint to a node
 kubectl taint nodes multinode-cluster-worker dedicated=development:NoSchedule
@@ -353,13 +358,13 @@ kubectl taint nodes multinode-cluster-worker dedicated-
 
 ## Comparison of Multi-Node Solutions
 
-| Feature | Kind | K3d | Minikube | K3s |
-|---------|------|-----|----------|-----|
-| Multi-node support | ✅ Excellent | ✅ Excellent | ⚠️ Limited | ✅ Excellent |
-| Resource usage | Medium | Low | High | Low |
-| Setup complexity | Low | Low | Medium | Medium |
-| Production readiness | Development | Development | Development | Production |
-| Community support | Excellent | Good | Excellent | Good |
+| Feature              | Kind         | K3d          | Minikube    | K3s          |
+| -------------------- | ------------ | ------------ | ----------- | ------------ |
+| Multi-node support   | ✅ Excellent | ✅ Excellent | ⚠️ Limited  | ✅ Excellent |
+| Resource usage       | Medium       | Low          | High        | Low          |
+| Setup complexity     | Low          | Low          | Medium      | Medium       |
+| Production readiness | Development  | Development  | Development | Production   |
+| Community support    | Excellent    | Good         | Excellent   | Good         |
 
 ## Cleanup
 

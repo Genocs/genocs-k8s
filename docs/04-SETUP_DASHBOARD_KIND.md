@@ -81,13 +81,13 @@ get_kind_ip() {
 # Function to setup port forwarding
 setup_port_forward() {
     local KIND_IP=$1
-    
+
     # Remove existing port forwarding if any
     powershell.exe -Command "netsh interface portproxy delete v4tov4 listenport=10443" 2>/dev/null
-    
+
     # Add new port forwarding
     powershell.exe -Command "netsh interface portproxy add v4tov4 listenport=10443 listenaddress=0.0.0.0 connectport=10443 connectaddress=$KIND_IP"
-    
+
     echo "Port forwarding configured: localhost:10443 -> $KIND_IP:10443"
 }
 

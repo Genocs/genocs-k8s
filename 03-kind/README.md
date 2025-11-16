@@ -98,10 +98,10 @@ $wslIP = wsl hostname -I
 $wslIP = $wslIP.Trim()
 
 # Add port forwarding
-netsh interface portproxy add v4tov4 listenport=8443 listenaddress=0.0.0.0 connectport=8443 connectaddress=$wslIP
+netsh interface portproxy add v4tov4 listenport=8743 listenaddress=0.0.0.0 connectport=8443 connectaddress=$wslIP
 
 # Add firewall rule
-New-NetFirewallRule -DisplayName "WSL2 K8s Dashboard" -Direction Inbound -LocalPort 8443 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "WSL2 K8s Dashboard" -Direction Inbound -LocalPort 8743 -Protocol TCP -Action Allow
 ```
 
 ## Troubleshooting:

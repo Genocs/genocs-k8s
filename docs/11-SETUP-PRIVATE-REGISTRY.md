@@ -238,7 +238,7 @@ spec:
       containers:
         - name: my-container
           image: your-registry/your-image:latest
-          imagePullPolicy: Always  # Options: Always, IfNotPresent, Never
+          imagePullPolicy: Always # Options: Always, IfNotPresent, Never
 ```
 
 ### Using ConfigMap for Registry Configuration

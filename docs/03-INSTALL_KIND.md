@@ -5,6 +5,7 @@ This guide provides comprehensive instructions for setting up a Kubernetes clust
 ## Overview
 
 Kind (Kubernetes in Docker) is a tool for running local Kubernetes clusters using Docker container "nodes". This setup provides:
+
 - Single or multi-node Kubernetes clusters
 - Easy cluster creation and destruction
 - Development and testing environment
@@ -334,6 +335,7 @@ kind delete cluster --name my-cluster
 ### Common Issues
 
 #### Docker Permission Issues
+
 ```bash
 # If you get permission errors with Docker
 sudo chmod 666 /var/run/docker.sock
@@ -341,6 +343,7 @@ sudo chmod 666 /var/run/docker.sock
 ```
 
 #### Port Conflicts
+
 ```bash
 # Check what's using a port
 sudo netstat -tulpn | grep :6443
@@ -350,6 +353,7 @@ powershell.exe -Command "netsh interface portproxy delete v4tov4 listenport=80"
 ```
 
 #### Cluster Creation Fails
+
 ```bash
 # Check Docker status
 docker info

@@ -15,11 +15,13 @@ The walkthrough covers setting up Helm for managing Kubernetes applications and 
 
 A solution based on Dapr is also provided. Dapr is a portable, event-driven runtime that makes it easy for developers to build resilient, stateless, and stateful applications that run on the cloud and edge.
 
-The solution covers the entire lifecycle of a Kubernetes application, from development to deployment and management. Additional resources include external MongoDB database, RabbitMQ message broker, Nginx Ingress Controller, and various Kubernetes resources such as Secrets, ConfigMaps, and more.
+The solution covers the entire lifecycle of a Kubernetes application, from development to deployment and management.
+
+Additional resources include external MongoDB database, RabbitMQ message broker, Nginx Ingress Controller, and various Kubernetes resources such as Secrets, ConfigMaps, and more.
 
 ## Architecture
 
-![Genocs Library Architecture](./assets/Genocs-Library-gnx-architecture.drawio.png)
+![Genocs Library Architecture](./assets/gnx-architecture.png)
 
 ## Requirements
 

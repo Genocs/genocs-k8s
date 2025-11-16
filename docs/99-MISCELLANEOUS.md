@@ -1,8 +1,6 @@
 # Miscellaneous
 
-
 - [Kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/) is a tool provided by Kubernetes to help you bootstrap a Kubernetes cluster. It simplifies the process of setting up a cluster by automating tasks such as generating certificates, creating configuration files, and starting the control plane components.
-
 
 ## MicroK8s
 
@@ -25,9 +23,6 @@ kind create cluster --config 05-kind-multinode/kind-cluster-config.yaml
 ```
 
 This command will create a Kubernetes cluster using the configuration specified in the `kind-cluster-config.yaml` file. The configuration file allows you to customize the cluster settings, such as the number of nodes, their roles, and other parameters.
-
-
-
 
 # How to setup pull images from private registry
 
@@ -78,9 +73,8 @@ After applying this deployment, your MicroK8s cluster will use the specified sec
 
 Official documentation for MicroK8s can be found at [MicroK8s Documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
 
-
-
 ---
+
 # Certification exam questions
 
 This section contains the questions from the certification exam.
@@ -138,9 +132,9 @@ kubectl create secret tls webhook-server-tls --cert="webhook-server.crt" --key="
 
 # Check the current kube-apiserver configuration
 
-# This command will show the kube-apiserver help options, 
+# This command will show the kube-apiserver help options,
 # which can be useful for understanding its configuration and available flags.
-kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h 
+kubectl exec -it kube-apiserver-controlplane -n kube-system -- kube-apiserver -h
 
 # This command will show the kube-apiserver configuration file.
 # Edit the kube-apiserver configuration file
