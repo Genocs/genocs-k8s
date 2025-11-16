@@ -1,0 +1,97 @@
+# Dynamic Storage Provisioning Examples
+# These examples show alternatives to manual storage provisioning
+
+# 1. Local Path Storage Class (for Kind, Minikube)
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-local-path
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+
+# 2. HostPath Storage Class (for MicroK8s)
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-hostpath
+provisioner: microk8s.io/hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+
+# 3. AWS EBS Storage Class (for EKS)
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-gp3
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  fsType: ext4
+  encrypted: "true"
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+
+# 4. Azure Disk Storage Class (for AKS)
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-premium-ssd
+provisioner: disk.csi.azure.com
+parameters:
+  storageaccounttype: Premium_LRS
+  kind: Managed
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+
+# 5. Google Cloud Disk Storage Class (for GKE)
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-ssd
+provisioner: pd.csi.storage.gke.io
+parameters:
+  type: pd-ssd
+  replication-type: none
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+
+# Example: PVC using dynamic provisioning
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-claim-log
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gnx-local-path  # Use appropriate storage class
+  resources:
+    requests:
+      storage: 50Mi
+
+# Example: Pod using dynamic PVC
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-dynamic
+spec:
+  containers:
+    - name: webapp-dynamic
+      image: kodecloud/event-simulator
+      volumeMounts:
+        - mountPath: /log
+          name: log-volume
+  volumes:
+    - name: log-volume
+      persistentVolumeClaim:
+        claimName: dynamic-claim-log

@@ -162,17 +162,121 @@ kubectl get pods webapp webapp-claim
 kubectl get configmap webapp-config-map
 ```
 
+## Alternative Storage Provisioning
+
+The current `gnx-sc` storage class uses manual provisioning, which requires pre-creating persistent volumes. Here are better alternatives for different environments:
+
+### 1. Dynamic Provisioning with Local Path
+
+For single-node clusters like Kind, Minikube, or development environments:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-local-path
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+```
+
+### 2. Dynamic Provisioning with hostPath (MicroK8s)
+
+For MicroK8s clusters:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-hostpath
+provisioner: microk8s.io/hostpath
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+```
+
+### 3. Cloud Provider Storage Classes
+
+For cloud environments, use provider-specific storage classes:
+
+**AWS EKS:**
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-gp3
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  fsType: ext4
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+```
+
+**Azure AKS:**
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-premium-ssd
+provisioner: kubernetes.io/azure-disk
+parameters:
+  storageaccounttype: Premium_LRS
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+```
+
+**Google GKE:**
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-ssd
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+```
+
+### 4. Network File System (NFS)
+
+For shared storage across multiple nodes:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gnx-nfs
+provisioner: nfs-subdir-external-provisioner
+parameters:
+  server: nfs-server.example.com
+  path: /exported/path
+  archiveOnDelete: "false"
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+```
+
+## Recommended Approach
+
+1. **Development**: Use `local-path` provisioner for Kind/Minikube
+2. **Testing**: Use `hostpath` for MicroK8s or single-node setups
+3. **Production**: Use cloud-native storage classes (EBS, Azure Disk, GCE PD)
+4. **Multi-node on-premises**: Use NFS or Ceph/Rook for distributed storage
+
 ## Notes
 
 1. **Storage Class**: The `gnx-sc` storage class uses manual provisioning, requiring pre-created persistent volumes
 2. **Access Modes**: The PV supports `ReadWriteMany` but the PVC requests `ReadWriteOnce`
 3. **Capacity Mismatch**: The PV provides 100Mi but PVC only requests 50Mi
 4. **HostPath Limitations**: HostPath volumes are node-specific and not suitable for multi-node clusters in production
+5. **Typo**: There's a typo in the PV capacity specification ("10oMi" should be "100Mi")
 
 ## Best Practices
 
-- Use appropriate storage classes for your environment
-- Consider using dynamic provisioning in production
-- Match access modes between PV and PVC
+- Use dynamic provisioning instead of manual PV creation
+- Choose appropriate storage classes for your environment
+- Match access modes between PV and PVC requirements
 - Use network-attached storage for multi-node clusters
 - Implement proper backup strategies for persistent data
+- Set appropriate reclaim policies (Delete for dev, Retain for production)
+- Use `WaitForFirstConsumer` binding mode for better pod scheduling
