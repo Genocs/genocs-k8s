@@ -269,7 +269,6 @@ reclaimPolicy: Delete
 2. **Access Modes**: The PV supports `ReadWriteMany` but the PVC requests `ReadWriteOnce`
 3. **Capacity Mismatch**: The PV provides 100Mi but PVC only requests 50Mi
 4. **HostPath Limitations**: HostPath volumes are node-specific and not suitable for multi-node clusters in production
-5. **Typo**: There's a typo in the PV capacity specification ("10oMi" should be "100Mi")
 
 ## Best Practices
 
