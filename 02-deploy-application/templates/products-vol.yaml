@@ -9,6 +9,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     type: local
+
 spec:
   capacity:
     storage: 10Mi # Change this to your desired storage size.

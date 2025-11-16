@@ -1,3 +1,5 @@
+
+# Storage class example
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -16,6 +18,7 @@ data:
   APP_COLOR: "darkblue"
   APP_OTHER: "disregard"
 
+# Pod with hostPath volume and config map environment variables
 ---
 apiVersion: v1
 kind: Pod
@@ -37,6 +40,7 @@ spec:
     - configMapRef:
         name: webapp-config-map
 
+# Persistent volume and persistent volume claim example
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -44,7 +48,7 @@ metadata:
   name: pv-log
 spec:
   capacity:
-    storage: 10oMi
+    storage: 100Mi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -64,6 +68,7 @@ spec:
       storage: 50Mi
   storageClassName: gnx-sc
 
+# Pod using persistent volume claim
 ---
 apiVersion: v1
 kind: Pod

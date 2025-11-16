@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   name: apigateway
   namespace: {{ .Release.Namespace }}
+
 spec:
   replicas: {{ .Values.replicaCount }} # Number of pods to run
   selector:

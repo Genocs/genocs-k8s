@@ -5,6 +5,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: products-hpa
   namespace: {{ .Release.Namespace }}
+
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

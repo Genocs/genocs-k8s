@@ -4,6 +4,7 @@ kind: Service
 metadata:
   name: apigateway-svc
   namespace: {{ .Release.Namespace }}
+
 spec:
   selector:
     app: apigateway # Select pods with this label

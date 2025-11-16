@@ -110,5 +110,4 @@ echo "kubectl port-forward svc/rabbitmq -n rabbitmq 15672:15672"
 echo "To access the MongoDB UI, run the following command:"
 echo "kubectl port-forward svc/mongodb -n mongodb 27017:27017"
 echo "To access the Dapr Operator, run the following command:"
-echo "kubectl port-forward dapr-operator-<your_id> 40000:40000 -n dapr
-
+echo "kubectl port-forward dapr-operator-<your_id> 40000:40000 -n dapr"
