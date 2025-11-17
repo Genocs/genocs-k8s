@@ -1,4 +1,4 @@
-## Setup Helm
+# Setup Helm
 
 Helm is a package manager for Kubernetes that helps you manage Kubernetes applications. It allows you to define, install, and upgrade even the most complex Kubernetes applications. Follow these steps to use Helm with your MicroK8s cluster:
 

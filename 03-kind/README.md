@@ -1,8 +1,10 @@
 # Kubernetes Dashboard Setup for KIND
-I'm solution architect and I'm setup a K8s cluster on a Ubuntu 24.10 VM by using KIND. I'd like to setup the Dashboard to run whenever the VM is spin up. Can you prepare a solution for that?
+
+>**_PROMPT:_**
+>
+>I'm solution architect and I'm setup a K8s cluster on a Ubuntu 24.10 VM by using KIND. I'd like to setup the Dashboard to run whenever the VM is spin up. Can you prepare a solution for that?
 
 ## Solution
-
 
 I'll help you set up a Kubernetes Dashboard that automatically starts when your Ubuntu VM boots up. Here's a comprehensive solution using KIND:I've created a comprehensive solution for automatically setting up the Kubernetes Dashboard with KIND on your Ubuntu 24.10 VM. Here's what the script does:
 
@@ -53,9 +55,9 @@ journalctl -u k8s-dashboard -f
 The solution is robust and handles edge cases like Docker not being ready, cluster recreation, and service failures with automatic restarts. Would you like me to modify any part of this setup or add additional features?
 
 ---
-## Question
-
-The VM I've used is a windows WSL2 Linux VM, how can forward the port to be access from the windows host?
+>**_PROMPT:_**
+>
+>The VM I've used is a windows WSL2 Linux VM, how >can forward the port to be access from the >windows host?
 
 ## Solution
 
@@ -64,15 +66,18 @@ Great point! Since you're using WSL2, you'll need to handle port forwarding from
 ## WSL2-Specific Features Added:
 
 ### 1. **Automatic Windows Port Forwarding**
+
 - Detects WSL2 environment automatically
 - Uses `netsh` to create port proxy from Windows to WSL2
 - Maps Windows `localhost:8443` → WSL2 `<wsl-ip>:8443`
 
 ### 2. **Windows Firewall Configuration**
+
 - Automatically adds Windows Firewall rule for port 8443
 - Allows inbound connections to the dashboard
 
 ### 3. **Proper Cleanup**
+
 - Removes port forwarding rules when stopping the service
 - Cleans up firewall rules
 
@@ -84,7 +89,7 @@ Great point! Since you're using WSL2, you'll need to handle port forwarding from
 
 ## Access Points:
 
-- **From Windows**: `https://localhost:8443` 
+- **From Windows**: `https://localhost:8443`
 - **From WSL2**: `https://localhost:8443`
 - **From other machines on network**: `https://<windows-ip>:8443`
 

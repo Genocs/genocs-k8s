@@ -1,4 +1,4 @@
-# Setting Up Kubernetes Dashboard
+# Setting Up Kubernetes Dashboard with Automatic Startup in MicroK8s
 
 This guide provides step-by-step instructions for setting up the Kubernetes Dashboard in your MicroK8s cluster with automatic startup capabilities.
 
